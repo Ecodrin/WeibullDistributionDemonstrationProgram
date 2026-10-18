@@ -1,0 +1,7 @@
+add_library(weibull_distribution_math_library
+    include/weibull_distribution.hpp
+    src/weibull_distribution.cpp
+)
+
+target_include_directories(weibull_distribution_math_library PUBLIC include)
+set_target_properties(weibull_distribution_math_library PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)

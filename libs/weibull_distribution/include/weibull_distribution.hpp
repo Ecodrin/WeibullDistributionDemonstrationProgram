@@ -7,11 +7,13 @@
 namespace weibull_distribution_math {
     class weibull_distribution {
     private:
-        double k, lambda;
-        double probability_density_function(double x);
-        double membership_function(double x);
+        long double k, lambda;
+        long double probability_density_function(long double x);
     public:
-        weibull_distribution(double k=1, double lambda=0.5);
-        double calc_membership(double x);
+        weibull_distribution(long double k=1, long double lambda=0.5);
+        long double membership_function(long double x);
+        long double get_max_x() const;
     };
+
+    long double dichotomy_method(long double a, long double b, std::function<long double(long double)> f, int max_steps=100, long double eps=0.01);
 }

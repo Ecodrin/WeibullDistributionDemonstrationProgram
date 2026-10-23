@@ -1,26 +1,45 @@
 #include "weibull_distribution.hpp"
 
 namespace weibull_distribution_math {
-    weibull_distribution::weibull_distribution(double k, double lambda) : k{k}, lambda{lambda} {
+    weibull_distribution::weibull_distribution(long double k, long double lambda) : k{k}, lambda{lambda} {
 
     }
 
-    double weibull_distribution::probability_density_function(double x) {
+    long double weibull_distribution::probability_density_function(long double x) {
         if (x < 0) {
             return 0;
         }
         return (k / lambda) * std::pow(x / lambda, k-1) * std::exp(-std::pow(x / lambda, k));
     }
 
-    double weibull_distribution::membership_function(double x) {
+    long double weibull_distribution::membership_function(long double x) {
         if (k > 1) {
-            double x_max = lambda * std::pow((k-1) / k, 1/k);
+            long double x_max = lambda * std::pow((k-1) / k, 1/k);
             return std::pow(x / x_max, k-1) * std::exp(std::pow(x_max / lambda, k) - std::pow(x / lambda, k));
         } else {
             return 1 - std::exp(-std::pow(x / lambda, k));
         }
     }
-    double weibull_distribution::calc_membership(double x) {
-        return membership_function(x);
+
+    long double weibull_distribution::get_max_x() const {
+        return lambda * std::pow((k-1) / k, 1/k);
+    }
+
+    long double dichotomy_method(long double a, long double b, std::function<long double(long double)> f, int max_steps, long double eps) {
+        if (f(a) * f(b) > 0) {
+            return -1;
+        }
+        int step = 0;
+        while ((std::abs(b - a) > eps) && (step < max_steps)) {
+            long double c = (a + b) / 2;
+            if (f(c) * f(a) < 0) {
+                b = c;
+            } else {
+                a = c;
+            }
+            step++;
+        }
+        return (a + b) / 2;
+
     }
 }

@@ -1,2 +1,2 @@
 add_subdirectory(weibull_distribution)
-# add_subdirectory(fuzzy_logic)
+add_subdirectory(fuzzy_logic)

@@ -85,15 +85,21 @@ namespace fuzzy_logic {
         }
         return *this;
     }
+    void fuzzy_value::save(const std::string &filename) const {
+        std::ofstream out;
+        out.open(filename);
+        out << (*this);
+        out.close();
+    }
     std::ostream &operator<<(std::ostream &out, const fuzzy_value &value)
     {
-        std::cout << "=============================\n";
+        out << "================================================\n";
         for(size_t i = 0; i < value.alphas.size(); ++i) {
-            std::cout << std::setw(8) << std::setfill(' ') << value.alphas[i] 
-                    << std::setw(10) << std::setfill(' ') << value.intervals[i].first 
-                    << std::setw(10) << std::setfill(' ') << value.intervals[i].second << std::endl;
+            out << std::setw(10) << std::setfill(' ') << value.alphas[i] 
+                    << std::setw(16) << std::setfill(' ') << value.intervals[i].first 
+                    << std::setw(16) << std::setfill(' ') << value.intervals[i].second << std::endl;
         }
-        std::cout << "=============================" << std::endl;
+        out << "================================================\n" << std::endl;
         return out;
     }
     fuzzy_value operator+(const fuzzy_value &first, const fuzzy_value &second) {

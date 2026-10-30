@@ -85,7 +85,34 @@ namespace fuzzy_logic {
         }
         return *this;
     }
-    void fuzzy_value::save(const std::string &filename) const {
+    fuzzy_value &fuzzy_value::operator*=(const fuzzy_value &other) {
+        if (alphas != other.alphas) {
+            throw std::runtime_error("incorrect alphas");
+        }
+        for(size_t i = 0; i < intervals.size(); ++i) {
+            std::vector<long double> values = {intervals[i].first * other.intervals[i].first, intervals[i].first * other.intervals[i].second, 
+                                        intervals[i].second * other.intervals[i].first, intervals[i].second * other.intervals[i].second};
+            intervals[i].first = *std::min_element(values.begin(), values.end());
+            intervals[i].second = *std::max_element(values.begin(), values.end());
+        }
+        return *this;
+    }
+
+    fuzzy_value &fuzzy_value::operator/=(const fuzzy_value &other) {
+        if (alphas != other.alphas) {
+            throw std::runtime_error("incorrect alphas");
+        }
+        for(size_t i = 0; i < intervals.size(); ++i) {
+            std::vector<long double> values = {intervals[i].first / other.intervals[i].first, intervals[i].first / other.intervals[i].second, 
+                                        intervals[i].second / other.intervals[i].first, intervals[i].second / other.intervals[i].second};
+            intervals[i].first = *std::min_element(values.begin(), values.end());
+            intervals[i].second = *std::max_element(values.begin(), values.end());
+        }
+        return *this;
+    }
+
+    void fuzzy_value::save(const std::string &filename) const
+    {
         std::ofstream out;
         out.open(filename);
         out << (*this);
@@ -109,5 +136,13 @@ namespace fuzzy_logic {
     fuzzy_value operator-(const fuzzy_value &first, const fuzzy_value &second) {
         fuzzy_value copy(first);
         return copy -= second;
+    }
+    fuzzy_value operator*(const fuzzy_value &first, const fuzzy_value &second) {
+        fuzzy_value copy(first);
+        return copy *= second;
+    }
+    fuzzy_value operator/(const fuzzy_value &first, const fuzzy_value &second) {
+        fuzzy_value copy(first);
+        return copy /= second;
     }
 }

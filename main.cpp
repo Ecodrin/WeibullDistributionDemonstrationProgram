@@ -28,8 +28,12 @@ int main() {
     std::cout << res1;
     fuzzy_logic::fuzzy_value res2 = (v2 - v);
     std::cout << res2;
+    fuzzy_logic::fuzzy_value res3 = (v2 * v);
+    std::cout << res3;
+    fuzzy_logic::fuzzy_value res4 = (v2 / v);
+    std::cout << res4;
     std::cout << v.calc_membership(1) << " " << v2.calc_membership(1) << " " << res1.calc_membership(1) <<  " " << res2.calc_membership(1) << std::endl;
+    std::cout << res3.calc_membership(1) << std::endl;
+    std::cout << res4.calc_membership(1) << std::endl;
 
-
-    v.save("1.log");
 }

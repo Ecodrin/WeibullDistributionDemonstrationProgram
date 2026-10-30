@@ -4,6 +4,7 @@
 #include <functional>
 #include <iomanip>
 #include <fstream>
+#include <algorithm>
 
 
 #include "weibull_distribution.hpp"
@@ -23,9 +24,13 @@ namespace fuzzy_logic {
         fuzzy_value& operator=(const fuzzy_value & other);
         fuzzy_value& operator+=(const fuzzy_value & other);
         fuzzy_value& operator-=(const fuzzy_value & other);
+        fuzzy_value& operator*=(const fuzzy_value & other);
+        fuzzy_value& operator/=(const fuzzy_value & other);
         friend std::ostream& operator<<(std::ostream & out, const fuzzy_value & value);
         void save(const std::string &filename) const;
     }; 
     fuzzy_value operator+(const fuzzy_value & first, const fuzzy_value & second);
     fuzzy_value operator-(const fuzzy_value & first, const fuzzy_value & second);
+    fuzzy_value operator*(const fuzzy_value & first, const fuzzy_value & second);
+    fuzzy_value operator/(const fuzzy_value & first, const fuzzy_value & second);
 }

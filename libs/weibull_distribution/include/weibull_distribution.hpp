@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include <cmath>
+#include <random>
 
 namespace weibull_distribution_math {
     class weibull_distribution {
@@ -16,4 +17,5 @@ namespace weibull_distribution_math {
     };
 
     long double dichotomy_method(long double a, long double b, std::function<long double(long double)> f, int max_steps=100, long double eps=0.01);
+    weibull_distribution generate_random_weibull_distribution();
 }

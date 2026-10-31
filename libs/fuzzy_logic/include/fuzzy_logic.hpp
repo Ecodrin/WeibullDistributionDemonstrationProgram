@@ -33,4 +33,6 @@ namespace fuzzy_logic {
     fuzzy_value operator-(const fuzzy_value & first, const fuzzy_value & second);
     fuzzy_value operator*(const fuzzy_value & first, const fuzzy_value & second);
     fuzzy_value operator/(const fuzzy_value & first, const fuzzy_value & second);
+
+    fuzzy_value generate_random_fuzzy_value(const std::vector<long double> &alphas={0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9});
 }

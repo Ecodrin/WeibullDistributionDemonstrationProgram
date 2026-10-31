@@ -145,4 +145,11 @@ namespace fuzzy_logic {
         fuzzy_value copy(first);
         return copy /= second;
     }
+
+    fuzzy_value generate_random_fuzzy_value(const std::vector<long double> &alphas) {
+        weibull_distribution_math::weibull_distribution w = weibull_distribution_math::generate_random_weibull_distribution();
+        return fuzzy_value([&](long double x){
+            return w.membership_function(x);
+        }, alphas, w.get_max_x());
+    }
 }

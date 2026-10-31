@@ -42,4 +42,14 @@ namespace weibull_distribution_math {
         return (a + b) / 2;
 
     }
+
+    weibull_distribution generate_random_weibull_distribution() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> random_k(0.1, 5);
+        std::uniform_real_distribution<> random_lambda(0.1, 10);
+        long double k = random_k(gen);
+        long double lambda = random_lambda(gen);
+        return weibull_distribution(k, lambda);
+    }
 }

@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
 #include <QMainWindow>
+#include "createfuzzyvaluewindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,7 +19,11 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
+private slots:
+    void on_CreateFuzzyValueButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+
 };
 #endif // MAINWINDOW_H

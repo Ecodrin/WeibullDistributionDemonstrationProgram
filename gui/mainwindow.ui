@@ -25,16 +25,9 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="CreateFuzzyValueButton">
        <property name="text">
-        <string>Сделать график</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="text">
-        <string>Создать/Редактировать нечеткую величину</string>
+        <string>Создать нечеткую величину</string>
        </property>
       </widget>
      </item>

@@ -12,3 +12,11 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_CreateFuzzyValueButton_clicked()
+{
+    CreateFuzzyValueWindow* create_fuzzy_window = new CreateFuzzyValueWindow(this);
+    create_fuzzy_window->setAttribute(Qt::WA_DeleteOnClose);
+    create_fuzzy_window->exec();
+}
+

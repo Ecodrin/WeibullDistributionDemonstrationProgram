@@ -17,6 +17,7 @@ public:
 
 private:
     Ui::CreateFuzzyValueWindow *ui;
+
 };
 
 #endif // CREATEFUZZYVALUEWINDOW_H

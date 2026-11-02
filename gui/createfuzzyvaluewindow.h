@@ -3,11 +3,16 @@
 
 #include <QDialog>
 #include <QMessageBox>
+#include <QQuickWidget>
+#include <QScatterSeries>
+#include <QValueAxis>
+#include <QList>
+#include <QVariant>
+#include <QXYSeries>
 
 #include <sstream>
 
 #include "fuzzy_logic.hpp"
-#include "plotview.h"
 
 namespace Ui {
 class CreateFuzzyValueWindow;
@@ -34,7 +39,6 @@ signals:
 private:
     Ui::CreateFuzzyValueWindow *ui;
     fuzzy_logic::fuzzy_value &value;
-    PlotView *plot_view;
     bool read_only;
 
     void draw_graphic();

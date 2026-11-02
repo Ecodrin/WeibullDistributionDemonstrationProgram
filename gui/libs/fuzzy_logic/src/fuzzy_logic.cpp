@@ -42,7 +42,7 @@ namespace fuzzy_logic {
     long double fuzzy_value::calc_membership(long double x) const {
         long double top = intervals[intervals.size()-1].first;
         if (x < top) {
-            if (x < intervals[0].second) {
+            if (x < intervals[0].first) {
                 return x / intervals[0].first * alphas[0];
             }
             for(int i = 1; i < intervals.size() ; ++i) {

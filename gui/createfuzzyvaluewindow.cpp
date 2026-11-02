@@ -1,37 +1,30 @@
 #include "createfuzzyvaluewindow.h"
 #include "ui_createfuzzyvaluewindow.h"
 
+
 CreateFuzzyValueWindow::CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value & val, QWidget *parent, bool read_only)
     : QDialog(parent), value{val}, read_only{read_only}
     , ui(new Ui::CreateFuzzyValueWindow)
 {
     ui->setupUi(this);
-    value = fuzzy_logic::generate_random_fuzzy_value();
-    plot_view = new PlotView(ui->graphicsView, 10000, this);
-    if (read_only) {
-        std::ostringstream oss;
-        std::vector<long double> alphas = value.get_alphas();
-        oss << std::fixed << std::setprecision(2);
-        for (size_t i = 0; i < alphas.size(); ++i) {
-            oss << alphas[i];
-            if (i < alphas.size() - 1) {
-                oss << " ";
-            }
-        }
-        ui->AlphasLineEdit->textEdited(QString::fromStdString(oss.str()));
-        oss.clear();
-        ui->WeibullParametrsLineEdit->clear();
-        change_alphas_table();
-    }
     ui->AlphasTableWidget->setColumnCount(3);
     ui->AlphasTableWidget->setHorizontalHeaderLabels({"Уровень", "A", "B"});
     ui->AlphasTableWidget->resizeColumnsToContents();
+
+    if (read_only) {
+        ui->CreateFuzzyValueButton->setEnabled(false);
+        ui->GenerateRandomFuzzyValueButton->setEnabled(false);
+        ui->CreateFuzzyValueButton->setEnabled(false);
+        ui->AlphasLineEdit->setReadOnly(true);
+        ui->WeibullParametrsLineEdit->setReadOnly(true);
+        draw_graphic();
+        change_alphas_table();
+    }
 
 }
 
 CreateFuzzyValueWindow::~CreateFuzzyValueWindow()
 {
-    delete plot_view;
     delete ui;
 }
 
@@ -49,12 +42,52 @@ void CreateFuzzyValueWindow::on_GenerateRandomFuzzyValueButton_clicked()
     }
 
     value = fuzzy_logic::generate_random_fuzzy_value(alphas);
-    // draw_graphic();
+    draw_graphic();
     change_alphas_table();
 }
 
 void CreateFuzzyValueWindow::draw_graphic() {
-    plot_view->draw(value);
+    QScatterSeries *scatterSeries = new QScatterSeries();
+    QQmlEngine *engine = ui->PlotValueQuickWidget->engine();
+    QQmlComponent *pointDelegate = new QQmlComponent(engine);
+    pointDelegate->setData(R"(
+        import QtQuick 2.0
+        Rectangle {
+            width: 2
+            height: 2
+            radius: 2
+            color: "red"
+        }
+    )", QUrl());
+    scatterSeries->setPointDelegate(pointDelegate);
+
+
+    std::vector<std::pair<long double, long double>> alphas_intervals = value.get_alphas_intervals();
+    std::vector<long double> alphas = value.get_alphas();
+    long double x_min = alphas_intervals[0].first - 0.2;
+    long double x_max = alphas_intervals[0].second + 0.2;
+    size_t steps = 1000;
+    long double x = x_min;
+    long double step = (x_max - x_min) / steps;
+    for(size_t i = 0; i < steps; ++i) {
+        scatterSeries->append(x, value.calc_membership(x));
+        x += step;
+    }
+
+    auto *axisX = new QValueAxis(this);
+    axisX->setRange(x_min, x_max);
+    axisX->setTickInterval((x_max - x_min) / 10);
+    auto *axisY = new QValueAxis(this);
+    axisY->setRange(0, 1.1);
+    axisY->setTickInterval(0.1);
+    ui->PlotValueQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    ui->PlotValueQuickWidget->setInitialProperties({
+        {"seriesList", QVariant::fromValue(QList<QObject*>{scatterSeries})},
+        {"axisX", QVariant::fromValue<QObject*>(axisX)},
+        {"axisY", QVariant::fromValue<QObject*>(axisY)}
+    });
+    ui->PlotValueQuickWidget->loadFromModule("QtGraphs", "GraphsView");
+
 }
 
 
@@ -84,6 +117,7 @@ void CreateFuzzyValueWindow::on_CreateFuzzyValueButton_clicked()
         return w.membership_function(x);
     }, alphas, w.get_max_x());
     change_alphas_table();
+    draw_graphic();
 }
 
 
@@ -91,10 +125,13 @@ void CreateFuzzyValueWindow::on_returnBackButton_clicked()
 {
 
     emit update_fuzzy_values_list_signal();
+    ui->PlotValueQuickWidget->close();
+    ui->AlphasTableWidget->clear();
     this->close();
 }
 
-void CreateFuzzyValueWindow::change_alphas_table() {
+void CreateFuzzyValueWindow::change_alphas_table()
+{
     std::vector<long double> alphas = value.get_alphas();
     ui->AlphasTableWidget->clearContents();
     std::vector<std::pair<long double, long double>> alphas_intervals = value.get_alphas_intervals();

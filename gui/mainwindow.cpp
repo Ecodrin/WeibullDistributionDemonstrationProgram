@@ -17,7 +17,7 @@ void MainWindow::on_CreateFuzzyValueButton_clicked()
 {
     fuzzy_logic::fuzzy_value new_value;
     fuzzy_values.push_back(new_value);
-    CreateFuzzyValueWindow* create_fuzzy_window = new CreateFuzzyValueWindow(new_value, this, false);
+    CreateFuzzyValueWindow* create_fuzzy_window = new CreateFuzzyValueWindow(fuzzy_values[fuzzy_values.size()-1], this, false);
 
     connect(create_fuzzy_window, &CreateFuzzyValueWindow::update_fuzzy_values_list_signal, this, &MainWindow::update_fuzzy_values_list);
     create_fuzzy_window->setAttribute(Qt::WA_DeleteOnClose);
@@ -33,7 +33,7 @@ void MainWindow::update_fuzzy_values_list() {
     }
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_GenerateFuzzyValuesButton_clicked()
 {
     size_t count_generate = ui->CountGenerateFuzzyValuesspinBox->value();
     for(size_t i = 0; i < count_generate; ++i) {
@@ -41,5 +41,17 @@ void MainWindow::on_pushButton_3_clicked()
         fuzzy_values.push_back(v);
     }
     update_fuzzy_values_list();
+}
+
+
+void MainWindow::on_FuzzyValueslistWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    size_t index = item->text().toULong();
+    // qDebug() << index << " " << fuzzy_values.size() << " " << fuzzy_values[index].get_alphas().size() << " " << fuzzy_values[index].get_alphas_intervals().size();
+    CreateFuzzyValueWindow* create_fuzzy_window = new CreateFuzzyValueWindow(fuzzy_values[index], this, true);
+
+    connect(create_fuzzy_window, &CreateFuzzyValueWindow::update_fuzzy_values_list_signal, this, &MainWindow::update_fuzzy_values_list);
+    create_fuzzy_window->setAttribute(Qt::WA_DeleteOnClose);
+    create_fuzzy_window->exec();
 }
 

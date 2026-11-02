@@ -27,7 +27,9 @@ private slots:
 
 
 
-    void on_pushButton_3_clicked();
+    void on_GenerateFuzzyValuesButton_clicked();
+
+    void on_FuzzyValueslistWidget_itemDoubleClicked(QListWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>541</height>
+    <width>912</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,9 +73,6 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="0">
-      <widget class="QGraphicsView" name="graphicsView"/>
-     </item>
      <item row="0" column="1">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -112,10 +109,24 @@
        </item>
       </layout>
      </item>
+     <item row="0" column="0">
+      <widget class="QQuickWidget" name="PlotValueQuickWidget">
+       <property name="resizeMode">
+        <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QQuickWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">QtQuickWidgets/QQuickWidget</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

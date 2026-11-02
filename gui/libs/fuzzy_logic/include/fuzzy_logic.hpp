@@ -16,12 +16,15 @@ namespace fuzzy_logic {
         std::vector<std::pair<long double, long double>> intervals;
         std::vector<long double> alphas;
     public:
+        fuzzy_value() = default;
         fuzzy_value(const std::function<long double(long double)> &membership_function, const std::vector<long double>& alphas, long double x_max);    
         fuzzy_value(const fuzzy_value & value);
-        std::vector<std::pair<long double, long double>> get_alphas() const;
-        long double calc_membership(long double x);
+        std::vector<std::pair<long double, long double>> get_alphas_intervals() const;
+        std::vector<long double> get_alphas() const;
+        long double calc_membership(long double x) const;
 
         fuzzy_value& operator=(const fuzzy_value & other);
+        fuzzy_value& operator=(fuzzy_value && other);
         fuzzy_value& operator+=(const fuzzy_value & other);
         fuzzy_value& operator-=(const fuzzy_value & other);
         fuzzy_value& operator*=(const fuzzy_value & other);

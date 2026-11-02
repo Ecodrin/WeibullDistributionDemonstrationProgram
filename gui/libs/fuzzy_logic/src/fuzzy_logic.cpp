@@ -2,6 +2,7 @@
 
 namespace fuzzy_logic {
     fuzzy_value::fuzzy_value(const std::function<long double(long double)> & membership_function, const std::vector <long double> & alphas, long double x_max) :alphas{alphas} {
+        this->alphas.push_back(0.999);
         for(int i = 0; i < alphas.size();++i) {
             long double L = weibull_distribution_math::dichotomy_method(0, x_max, [&](long double x) {
                 return membership_function(x) - alphas[i];
@@ -26,16 +27,19 @@ namespace fuzzy_logic {
             return membership_function(x) - 0.9999;
         });
         intervals.push_back({L, R});
-        this->alphas.push_back(0.9999);
     }
 
     fuzzy_value::fuzzy_value(const fuzzy_value &value) : alphas{value.alphas}, intervals{value.intervals} {}
 
-    std::vector<std::pair<long double, long double>> fuzzy_value::get_alphas() const {
+    std::vector<std::pair<long double, long double>> fuzzy_value::get_alphas_intervals() const {
         return intervals;
     }
 
-    long double fuzzy_value::calc_membership(long double x) {
+    std::vector<long double> fuzzy_value::get_alphas() const {
+        return alphas;
+    }
+
+    long double fuzzy_value::calc_membership(long double x) const {
         long double top = intervals[intervals.size()-1].first;
         if (x < top) {
             if (x < intervals[0].second) {
@@ -65,6 +69,17 @@ namespace fuzzy_logic {
         }
         return *this;
     }
+
+
+    fuzzy_value& fuzzy_value::operator=(fuzzy_value && other) {
+        if (this != &other) {
+            intervals = other.intervals;
+            alphas = other.alphas;
+            other.intervals = {};
+        }
+        return *this;
+    }
+
     fuzzy_value &fuzzy_value::operator+=(const fuzzy_value &other) {
         if (alphas != other.alphas) {
             throw std::runtime_error("incorrect alphas");

@@ -11,6 +11,8 @@
 #include <QXYSeries>
 
 #include <sstream>
+#include <format>
+#include <string>
 
 #include "fuzzy_logic.hpp"
 
@@ -43,6 +45,7 @@ private:
 
     void draw_graphic();
     void change_alphas_table();
+    void restore_alphas_string();
 };
 
 #endif // CREATEFUZZYVALUEWINDOW_H

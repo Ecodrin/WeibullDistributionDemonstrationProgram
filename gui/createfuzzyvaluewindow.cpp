@@ -11,14 +11,17 @@ CreateFuzzyValueWindow::CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value & val, Q
     ui->AlphasTableWidget->setHorizontalHeaderLabels({"Уровень", "A", "B"});
     ui->AlphasTableWidget->resizeColumnsToContents();
 
+
     if (read_only) {
+        draw_graphic();
+        change_alphas_table();
+        restore_alphas_string();
+
         ui->CreateFuzzyValueButton->setEnabled(false);
         ui->GenerateRandomFuzzyValueButton->setEnabled(false);
         ui->CreateFuzzyValueButton->setEnabled(false);
         ui->AlphasLineEdit->setReadOnly(true);
         ui->WeibullParametrsLineEdit->setReadOnly(true);
-        draw_graphic();
-        change_alphas_table();
     }
 
 }
@@ -142,5 +145,20 @@ void CreateFuzzyValueWindow::change_alphas_table()
         ui->AlphasTableWidget->setItem(i, 2, new QTableWidgetItem(QString::number(alphas_intervals[i].second, 'g', 7)));
     }
     ui->AlphasTableWidget->resizeColumnsToContents();
+}
+
+
+void CreateFuzzyValueWindow::restore_alphas_string() {
+    std::vector<long double> alphas = value.get_alphas();
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2);
+    for(size_t i = 0; i < alphas.size() - 1; ++i) {
+        oss << alphas[i];
+        if (i != alphas.size()-2) {
+            oss << " ";
+        }
+    }
+    qDebug() << oss.str();
+    ui->AlphasLineEdit->setText(QString::fromStdString(oss.str()));
 }
 

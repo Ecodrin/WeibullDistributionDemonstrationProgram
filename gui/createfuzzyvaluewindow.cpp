@@ -16,12 +16,14 @@ CreateFuzzyValueWindow::CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value & val, Q
         draw_graphic();
         change_alphas_table();
         restore_alphas_string();
+        ui->AlphasSpinBox->setValue(value.get_alphas().size());
 
         ui->CreateFuzzyValueButton->setEnabled(false);
         ui->GenerateRandomFuzzyValueButton->setEnabled(false);
         ui->CreateFuzzyValueButton->setEnabled(false);
         ui->AlphasLineEdit->setReadOnly(true);
         ui->WeibullParametrsLineEdit->setReadOnly(true);
+        ui->AlphasSpinBox->setReadOnly(true);
     }
 
 }
@@ -158,7 +160,55 @@ void CreateFuzzyValueWindow::restore_alphas_string() {
             oss << " ";
         }
     }
-    qDebug() << oss.str();
     ui->AlphasLineEdit->setText(QString::fromStdString(oss.str()));
+}
+
+
+void CreateFuzzyValueWindow::on_AlphasSpinBox_valueChanged(int arg1)
+{
+
+    std::vector<long double> alphas;
+
+    long double step = 1.0 / ((long double)arg1 + 1);
+    long double y = step;
+    for(size_t i = 0; i <= arg1; ++i) {
+        alphas.push_back(y);
+        y += step;
+    }
+
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2);
+    for(size_t i = 0; i < alphas.size() - 1; ++i) {
+        oss << alphas[i];
+        if (i != alphas.size()-2) {
+            oss << " ";
+        }
+    }
+    ui->AlphasLineEdit->setText(QString::fromStdString(oss.str()));
+}
+
+
+void CreateFuzzyValueWindow::on_SaveLogFilePushButton_clicked()
+{
+    QString path = QFileDialog::getSaveFileName(
+        this,
+        "Сохранить в log file",
+        "",
+        "Все файлы (*.*)"
+    );
+    if (path.isEmpty()) {
+        return;
+    }
+
+    QFile file(path);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        std::ostringstream oss;
+        oss << value;
+        out << QString::fromStdString(oss.str());
+        file.close();
+    } else {
+        QMessageBox::critical(this, "Ошибка", "Не удалось записать в файл");
+    }
 }
 

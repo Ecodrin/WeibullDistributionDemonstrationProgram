@@ -13,16 +13,23 @@ namespace weibull_distribution_math {
     }
 
     long double weibull_distribution::membership_function(long double x) {
+        if(x < 1e-10L) {
+            return 0;
+        }
         if (k > 1) {
             long double x_max = lambda * std::pow((k-1) / k, 1/k);
             return std::pow(x / x_max, k-1) * std::exp(std::pow(x_max / lambda, k) - std::pow(x / lambda, k));
         } else {
-            return 1 - std::exp(-std::pow(x / lambda, k));
+            long double F = 1 - std::exp(-std::pow(x / lambda, k));
+            return 4 * F * (1-F);
         }
     }
 
     long double weibull_distribution::get_max_x() const {
-        return lambda * std::pow((k-1) / k, 1/k);
+        if(k > 1) {
+            return lambda * std::pow((k-1) / k, 1/k);
+        }
+        return lambda * std::pow(std::log(2.0L), 1.0L / k);
     }
 
     long double dichotomy_method(long double a, long double b, std::function<long double(long double)> f, int max_steps, long double eps) {

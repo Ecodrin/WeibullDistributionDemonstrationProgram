@@ -9,6 +9,7 @@
 #include <QList>
 #include <QVariant>
 #include <QXYSeries>
+#include <QFileDialog>
 
 #include <sstream>
 #include <format>
@@ -34,6 +35,10 @@ private slots:
     void on_CreateFuzzyValueButton_clicked();
 
     void on_returnBackButton_clicked();
+
+    void on_AlphasSpinBox_valueChanged(int arg1);
+
+    void on_SaveLogFilePushButton_clicked();
 
 signals:
     void update_fuzzy_values_list_signal();

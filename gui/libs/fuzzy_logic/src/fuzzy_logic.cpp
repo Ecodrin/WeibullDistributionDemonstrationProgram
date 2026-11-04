@@ -2,9 +2,13 @@
 
 namespace fuzzy_logic {
     fuzzy_value::fuzzy_value(const std::function<long double(long double)> & membership_function, const std::vector <long double> & alphas, long double x_max) :alphas{alphas} {
-        this->alphas.push_back(0.999);
         for(int i = 0; i < alphas.size();++i) {
-            long double L = weibull_distribution_math::dichotomy_method(0, x_max, [&](long double x) {
+            long double step = 1.0, left = 0;
+            while(membership_function(left) > alphas[i]) {
+                step *= 2.0L;
+                left = x_max - step;
+            }
+            long double L = weibull_distribution_math::dichotomy_method(left, x_max, [&](long double x) {
                 return membership_function(x) - alphas[i];
             });
             long double right = 2 * x_max;
@@ -16,17 +20,8 @@ namespace fuzzy_logic {
             });
             intervals.push_back({L, R});
         }
-        long double L = weibull_distribution_math::dichotomy_method(0, x_max, [&](long double x) {
-            return membership_function(x) - 0.9999;
-        });
-        long double right = 2 * x_max;
-        while(membership_function(right) > 0.9999) {
-            right *= 2.0;
-        }
-        long double R = weibull_distribution_math::dichotomy_method(x_max, right, [&](long double x) {
-            return membership_function(x) - 0.9999;
-        });
-        intervals.push_back({L, R});
+        this->alphas.push_back(1);
+        intervals.push_back({x_max, x_max});
     }
 
     fuzzy_value::fuzzy_value(const fuzzy_value &value) : alphas{value.alphas}, intervals{value.intervals} {}
@@ -43,20 +38,44 @@ namespace fuzzy_logic {
         long double top = intervals[intervals.size()-1].first;
         if (x < top) {
             if (x < intervals[0].first) {
-                return x / intervals[0].first * alphas[0];
+                if (intervals[0].first < 1e-10) {
+                    return 0;
+                }
+                long double v = x / intervals[0].first * alphas[0];
+                if (v < 1e-10) {
+                    return 0;
+                }
+                return v;
             }
             for(int i = 1; i < intervals.size() ; ++i) {
-                if (x >= intervals[i-1].first && x <= intervals[i].first) {
-                    return alphas[i-1] + (x - intervals[i-1].first) / (intervals[i].first - intervals[i-1].first) * (alphas[i] - alphas[i-1]);
+                if (x <= intervals[i].first) {
+                    long double dx = intervals[i].first - intervals[i-1].first;
+                    if (dx < 1e-10L) {
+                        return alphas[i];
+                    }
+                    return alphas[i-1] + (x - intervals[i-1].first) / dx * (alphas[i] - alphas[i-1]);
                 }
             }
         } else {
             if (x > intervals[0].second) {
-                return x / intervals[0].second * alphas[0];
+                long double dx = intervals[0].second - intervals[1].second;
+                if(dx < 1e-10L) {
+                    return 0.0;
+                }
+                long double slope = (alphas[0]-alphas[1]) / dx;
+                long double v = alphas[0] + slope * (x - intervals[0].second);
+                // if (v < 1e-10) {
+                //     return 0;
+                // }
+                return v;
             }
             for(int i = intervals.size()-1; i > 0 ; --i) {
                 if (x >= intervals[i].second && x <= intervals[i-1].second) {
-                    return alphas[i] + (x - intervals[i].second) / (intervals[i-1].second - intervals[i].second) * (alphas[i-1] - alphas[i]);
+                    long double dx = intervals[i-1].second - intervals[i].second;
+                    if (dx < 1e-10L) {
+                        return alphas[i];
+                    }
+                    return alphas[i] + (x - intervals[i].second) / dx * (alphas[i-1] - alphas[i]);
                 }
             }
         }

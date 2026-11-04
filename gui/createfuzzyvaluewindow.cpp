@@ -1,12 +1,21 @@
 #include "createfuzzyvaluewindow.h"
 #include "ui_createfuzzyvaluewindow.h"
-
+#include <QGraphsTheme>
 
 CreateFuzzyValueWindow::CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value & val, QWidget *parent, bool read_only)
     : QDialog(parent), value{val}, read_only{read_only}
     , ui(new Ui::CreateFuzzyValueWindow)
 {
     ui->setupUi(this);
+    ui->PlotValueQuickWidget->setClearColor(QColor("#18181b"));
+    ui->AlphasSpinBox->setButtonSymbols(
+        QAbstractSpinBox::UpDownArrows
+        );
+
+    ui->PlotValueQuickWidget->setStyleSheet(
+        "background-color: #18181b;"
+        "border: 1px solid #3f3f46;"
+        );
     ui->AlphasTableWidget->setColumnCount(3);
     ui->AlphasTableWidget->setHorizontalHeaderLabels({"Уровень", "A", "B"});
     ui->AlphasTableWidget->resizeColumnsToContents();
@@ -52,20 +61,22 @@ void CreateFuzzyValueWindow::on_GenerateRandomFuzzyValueButton_clicked()
 }
 
 void CreateFuzzyValueWindow::draw_graphic() {
+    ui->PlotValueQuickWidget->setClearColor(QColor("#18181b"));
+
     QScatterSeries *scatterSeries = new QScatterSeries();
     QQmlEngine *engine = ui->PlotValueQuickWidget->engine();
     QQmlComponent *pointDelegate = new QQmlComponent(engine);
-    pointDelegate->setData(R"(
-        import QtQuick 2.0
-        Rectangle {
-            width: 2
-            height: 2
-            radius: 2
-            color: "red"
-        }
-    )", QUrl());
-    scatterSeries->setPointDelegate(pointDelegate);
 
+    pointDelegate->setData(R"(
+import QtQuick 2.0
+Rectangle {
+width: 3
+height: 3
+radius: 1.5
+color: "#6366f1"
+}
+)", QUrl());
+    scatterSeries->setPointDelegate(pointDelegate);
 
     std::vector<std::pair<long double, long double>> alphas_intervals = value.get_alphas_intervals();
     std::vector<long double> alphas = value.get_alphas();
@@ -74,6 +85,7 @@ void CreateFuzzyValueWindow::draw_graphic() {
     size_t steps = 1000;
     long double x = x_min;
     long double step = (x_max - x_min) / steps;
+
     for(size_t i = 0; i < steps; ++i) {
         scatterSeries->append(x, value.calc_membership(x));
         x += step;
@@ -82,19 +94,38 @@ void CreateFuzzyValueWindow::draw_graphic() {
     auto *axisX = new QValueAxis(this);
     axisX->setRange(x_min, x_max);
     axisX->setTickInterval((x_max - x_min) / 10);
+
     auto *axisY = new QValueAxis(this);
     axisY->setRange(0, 1.1);
     axisY->setTickInterval(0.1);
+
+    QGraphsTheme *theme = new QGraphsTheme(this);
+
+    // Принудительно устанавливаем тёмную тему
+    theme->setColorScheme(QGraphsTheme::ColorScheme::Dark);
+
+    // Фон всего графика
+    theme->setBackgroundColor(QColor("#18181b"));
+    theme->setBackgroundVisible(true);
+
+    // Фон области построения
+    theme->setPlotAreaBackgroundColor(QColor("#09090b"));
+    theme->setPlotAreaBackgroundVisible(true);
+
+    // Оформление подписей
+    theme->setLabelBackgroundVisible(false);
+    theme->setLabelTextColor(QColor("#d4d4d8"));
     ui->PlotValueQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
     ui->PlotValueQuickWidget->setInitialProperties({
         {"seriesList", QVariant::fromValue(QList<QObject*>{scatterSeries})},
         {"axisX", QVariant::fromValue<QObject*>(axisX)},
-        {"axisY", QVariant::fromValue<QObject*>(axisY)}
+        {"axisY", QVariant::fromValue<QObject*>(axisY)},
+        {"theme", QVariant::fromValue(theme)} // Передаем объект темы
     });
+
     ui->PlotValueQuickWidget->loadFromModule("QtGraphs", "GraphsView");
-
 }
-
 
 void CreateFuzzyValueWindow::on_CreateFuzzyValueButton_clicked()
 {

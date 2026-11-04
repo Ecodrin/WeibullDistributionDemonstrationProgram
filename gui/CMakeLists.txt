@@ -9,8 +9,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Graphs Quick QuickWidgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Graphs Quick QuickWidgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
+    Widgets Graphs Quick QuickWidgets Svg
+)
+
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
+    Widgets Graphs Quick QuickWidgets Svg
+)
+
+# QSS renders SVG arrows through Qt's SVG icon plugin.
+if(QT_VERSION_MAJOR EQUAL 6)
+    find_package(Qt6 REQUIRED COMPONENTS Svg)
+endif()
 
 set(PROJECT_SOURCES
         main.cpp
@@ -25,29 +35,44 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(gui
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        createfuzzyvaluewindow.h createfuzzyvaluewindow.cpp createfuzzyvaluewindow.ui
+        createfuzzyvaluewindow.h
+        createfuzzyvaluewindow.cpp
+        createfuzzyvaluewindow.ui
 
-
-
-
-
-
+        # Убрали styles.css отсюда, это не C++ файл
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET gui APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+
+    # Ресурсы доступны приложению по адресам:
+    # :/styles.css, :/up.svg и :/down.svg
+    # BASE задаёт корень проекта, поэтому пути не зависят от build-directory.
+    set(APP_RESOURCE_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/styles.css"
+        "${CMAKE_CURRENT_SOURCE_DIR}/up.svg"
+        "${CMAKE_CURRENT_SOURCE_DIR}/down.svg"
+    )
+
+    foreach(resource_file IN LISTS APP_RESOURCE_FILES)
+        if(NOT EXISTS "${resource_file}")
+            message(FATAL_ERROR "Не найден файл ресурса: ${resource_file}")
+        endif()
+    endforeach()
+
+    qt_add_resources(gui "app_resources"
+        PREFIX "/"
+        BASE "${CMAKE_CURRENT_SOURCE_DIR}"
+        FILES ${APP_RESOURCE_FILES}
+    )
+
 else()
     if(ANDROID)
         add_library(gui SHARED
             ${PROJECT_SOURCES}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(gui
             ${PROJECT_SOURCES}
         )
+        # Для Qt5 стили добавляются через .qrc файл (см. примечание ниже)
     endif()
 endif()
 
@@ -55,11 +80,29 @@ target_link_libraries(gui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Graphs
     Qt${QT_VERSION_MAJOR}::Quick
     Qt${QT_VERSION_MAJOR}::QuickWidgets
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Svg
     weibull_distribution_math_library fuzzy_logic_library)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
+if(DEFINED VCPKG_INSTALLED_DIR
+   AND DEFINED VCPKG_TARGET_TRIPLET)
+
+    set(APP_VCPKG_TRIPLET_DIR
+        "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+
+    file(TO_CMAKE_PATH
+        "${APP_VCPKG_TRIPLET_DIR}"
+        APP_VCPKG_TRIPLET_DIR)
+
+    target_compile_definitions(gui PRIVATE
+        "APP_VCPKG_TRIPLET_DIR=\"${APP_VCPKG_TRIPLET_DIR}\""
+    )
+endif()
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(gui PRIVATE Qt6::Svg)
+endif()
+
 if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.gui)
 endif()

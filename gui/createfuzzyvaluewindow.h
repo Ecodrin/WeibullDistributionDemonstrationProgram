@@ -26,7 +26,7 @@ class CreateFuzzyValueWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value & val,QWidget *parent = nullptr,bool read_only = false);
+    explicit CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value val,QWidget *parent = nullptr,bool read_only = false);
     ~CreateFuzzyValueWindow();
 
 private slots:
@@ -41,11 +41,12 @@ private slots:
     void on_SaveLogFilePushButton_clicked();
 
 signals:
+    void add_fuzzy_value_to_list_signal(fuzzy_logic::fuzzy_value val);
     void update_fuzzy_values_list_signal();
 
 private:
     Ui::CreateFuzzyValueWindow *ui;
-    fuzzy_logic::fuzzy_value &value;
+    fuzzy_logic::fuzzy_value value;
     bool read_only;
 
     void draw_graphic();

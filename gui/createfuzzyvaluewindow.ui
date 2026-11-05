@@ -25,6 +25,9 @@
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
           <widget class="QPushButton" name="GenerateRandomFuzzyValueButton">
+           <property name="toolTip">
+            <string>Программа сама подберет параметры для распределения</string>
+           </property>
            <property name="text">
             <string>Сгенерировать рандомную величину</string>
            </property>

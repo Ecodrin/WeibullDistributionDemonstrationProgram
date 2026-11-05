@@ -24,12 +24,16 @@ public:
 private slots:
     void on_CreateFuzzyValueButton_clicked();
     void update_fuzzy_values_list();
+    void add_fuzzy_value_to_list(fuzzy_logic::fuzzy_value val);
 
 
 
     void on_GenerateFuzzyValuesButton_clicked();
 
     void on_FuzzyValueslistWidget_itemDoubleClicked(QListWidgetItem *item);
+    void update_values_in_base_operations();
+
+    void on_calculateButton_clicked();
 
 private:
     Ui::MainWindow *ui;

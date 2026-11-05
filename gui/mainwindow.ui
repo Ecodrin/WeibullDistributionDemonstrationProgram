@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
-    <height>523</height>
+    <width>833</width>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,17 +17,7 @@
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="2">
-       <widget class="QGraphicsView" name="graphicsView"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Нечеткие величины</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
+      <item row="1" column="0">
        <widget class="QListWidget" name="FuzzyValueslistWidget">
         <property name="maximumSize">
          <size>
@@ -40,21 +30,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QPushButton" name="CreateFuzzyValueButton">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Создать</string>
+         <string>Нечеткие величины</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QPushButton" name="GenerateFuzzyValuesButton">
-        <property name="text">
-         <string>Сгенерировать</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
+      <item row="4" column="2">
        <widget class="QSpinBox" name="CountGenerateFuzzyValuesspinBox">
         <property name="minimum">
          <number>10</number>
@@ -63,6 +46,97 @@
          <number>400</number>
         </property>
        </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="CreateFuzzyValueButton">
+        <property name="text">
+         <string>Создать</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QPushButton" name="GenerateFuzzyValuesButton">
+        <property name="text">
+         <string>Сгенерировать</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item alignment="Qt::AlignmentFlag::AlignBottom">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Арифметические операции</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item alignment="Qt::AlignmentFlag::AlignTop">
+           <widget class="QComboBox" name="BaseOperationAcomboBox"/>
+          </item>
+          <item alignment="Qt::AlignmentFlag::AlignTop">
+           <widget class="QComboBox" name="BaseOperatrioncomboBox">
+            <item>
+             <property name="text">
+              <string>+</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>-</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>*</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>/</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignmentFlag::AlignTop">
+           <widget class="QComboBox" name="BaseOperationBcomboBox"/>
+          </item>
+          <item alignment="Qt::AlignmentFlag::AlignTop">
+           <widget class="QPushButton" name="calculateButton">
+            <property name="text">
+             <string>Вычислить</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item alignment="Qt::AlignmentFlag::AlignBottom">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Кластерный анализ</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item alignment="Qt::AlignmentFlag::AlignTop">
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignmentFlag::AlignTop">
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

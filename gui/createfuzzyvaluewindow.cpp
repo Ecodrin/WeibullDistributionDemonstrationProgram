@@ -2,7 +2,7 @@
 #include "ui_createfuzzyvaluewindow.h"
 #include <QGraphsTheme>
 
-CreateFuzzyValueWindow::CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value & val, QWidget *parent, bool read_only)
+CreateFuzzyValueWindow::CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value val, QWidget *parent, bool read_only)
     : QDialog(parent), value{val}, read_only{read_only}
     , ui(new Ui::CreateFuzzyValueWindow)
 {
@@ -60,7 +60,8 @@ void CreateFuzzyValueWindow::on_GenerateRandomFuzzyValueButton_clicked()
     change_alphas_table();
 }
 
-void CreateFuzzyValueWindow::draw_graphic() {
+void CreateFuzzyValueWindow::draw_graphic()
+{
     ui->PlotValueQuickWidget->setClearColor(QColor("#18181b"));
 
     QScatterSeries *scatterSeries = new QScatterSeries();
@@ -68,14 +69,14 @@ void CreateFuzzyValueWindow::draw_graphic() {
     QQmlComponent *pointDelegate = new QQmlComponent(engine);
 
     pointDelegate->setData(R"(
-import QtQuick 2.0
-Rectangle {
-width: 3
-height: 3
-radius: 1.5
-color: "#6366f1"
-}
-)", QUrl());
+        import QtQuick 2.0
+        Rectangle {
+        width: 3
+        height: 3
+        radius: 1.5
+        color: "#6366f1"
+        }
+        )", QUrl());
     scatterSeries->setPointDelegate(pointDelegate);
 
     std::vector<std::pair<long double, long double>> alphas_intervals = value.get_alphas_intervals();
@@ -101,18 +102,14 @@ color: "#6366f1"
 
     QGraphsTheme *theme = new QGraphsTheme(this);
 
-    // Принудительно устанавливаем тёмную тему
     theme->setColorScheme(QGraphsTheme::ColorScheme::Dark);
 
-    // Фон всего графика
     theme->setBackgroundColor(QColor("#18181b"));
     theme->setBackgroundVisible(true);
 
-    // Фон области построения
     theme->setPlotAreaBackgroundColor(QColor("#09090b"));
     theme->setPlotAreaBackgroundVisible(true);
 
-    // Оформление подписей
     theme->setLabelBackgroundVisible(false);
     theme->setLabelTextColor(QColor("#d4d4d8"));
     ui->PlotValueQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
@@ -160,7 +157,11 @@ void CreateFuzzyValueWindow::on_CreateFuzzyValueButton_clicked()
 void CreateFuzzyValueWindow::on_returnBackButton_clicked()
 {
 
-    emit update_fuzzy_values_list_signal();
+    if(read_only) {
+        emit update_fuzzy_values_list_signal();
+    } else {
+        emit add_fuzzy_value_to_list_signal(value);
+    }
     ui->PlotValueQuickWidget->close();
     ui->AlphasTableWidget->clear();
     this->close();

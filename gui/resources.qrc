@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/qml/scatterview">
-        <file>scatterview.qml</file>
-	<file alias="icons/up.svg">icons/up.svg</file>
-	<file alias="icons/down.svg">icons/down.svg</file>
-    </qresource>
-</RCC>

@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->ClasterQuickWidget->setClearColor(QColor("#18181b"));
+
 }
 
 MainWindow::~MainWindow()
@@ -29,6 +31,7 @@ void MainWindow::update_fuzzy_values_list()
         ui->FuzzyValueslistWidget->addItem(QString::fromStdString(std::to_string(i)));
     }
     update_values_in_base_operations();
+    update_count_clasters_clasess();
 }
 
 void MainWindow::on_GenerateFuzzyValuesButton_clicked()
@@ -100,5 +103,15 @@ void MainWindow::on_calculateButton_clicked()
     }
     fuzzy_values.push_back(result);
     update_fuzzy_values_list();
+}
+
+
+void MainWindow::update_count_clasters_clasess()
+{
+    ui->CountClastersClassesComboBox->clear();
+    for(size_t i = 1; i <= fuzzy_values.size(); ++i) {
+        ui->CountClastersClassesComboBox->addItem(QString::fromStdString(std::to_string(i)));
+    }
+
 }
 

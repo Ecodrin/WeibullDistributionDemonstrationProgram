@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
-    <height>502</height>
+    <width>655</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,18 +119,27 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item alignment="Qt::AlignmentFlag::AlignTop">
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="text">
-             <string>PushButton</string>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="1" column="0">
+           <widget class="QQuickWidget" name="ClasterQuickWidget">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>300</height>
+             </size>
+            </property>
+            <property name="resizeMode">
+             <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
             </property>
            </widget>
           </item>
-          <item alignment="Qt::AlignmentFlag::AlignTop">
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>PushButton</string>
+          <item row="0" column="0">
+           <widget class="QComboBox" name="CountClastersClassesComboBox">
+            <property name="currentText">
+             <string/>
+            </property>
+            <property name="placeholderText">
+             <string>Количество классов</string>
             </property>
            </widget>
           </item>
@@ -143,6 +152,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QQuickWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">QtQuickWidgets/QQuickWidget</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

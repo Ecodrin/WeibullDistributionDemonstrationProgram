@@ -34,11 +34,13 @@ private slots:
     void update_values_in_base_operations();
 
     void on_calculateButton_clicked();
+    void update_count_clasters_clasess();
 
 private:
     Ui::MainWindow *ui;
 
     std::vector<fuzzy_logic::fuzzy_value> fuzzy_values;
+
 
 };
 #endif // MAINWINDOW_H

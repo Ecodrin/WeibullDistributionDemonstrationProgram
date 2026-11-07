@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>655</width>
-    <height>454</height>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,6 +27,9 @@
         </property>
         <property name="editTriggers">
          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
         </property>
        </widget>
       </item>
@@ -120,7 +123,24 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="1" column="0">
+          <item row="0" column="0">
+           <widget class="QComboBox" name="CountClastersClassesComboBox">
+            <property name="currentText">
+             <string/>
+            </property>
+            <property name="placeholderText">
+             <string>Количество классов</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="CreateClastersPushButton">
+            <property name="text">
+             <string>Разбить по кластерам</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
            <widget class="QQuickWidget" name="ClasterQuickWidget">
             <property name="minimumSize">
              <size>
@@ -130,16 +150,6 @@
             </property>
             <property name="resizeMode">
              <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QComboBox" name="CountClastersClassesComboBox">
-            <property name="currentText">
-             <string/>
-            </property>
-            <property name="placeholderText">
-             <string>Количество классов</string>
             </property>
            </widget>
           </item>

@@ -5,6 +5,10 @@
 
 #include <QListWidget>
 #include <QMainWindow>
+#include <QQuickWidget>
+#include <QScatterSeries>
+#include <QValueAxis>
+#include <QGraphsTheme>
 #include "createfuzzyvaluewindow.h"
 
 QT_BEGIN_NAMESPACE
@@ -35,6 +39,10 @@ private slots:
 
     void on_calculateButton_clicked();
     void update_count_clasters_clasess();
+    void draw_clasters(const std::vector<fuzzy_logic::fuzzy_value> & values);
+
+
+    void on_CreateClastersPushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

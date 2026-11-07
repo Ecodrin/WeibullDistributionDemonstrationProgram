@@ -112,6 +112,91 @@ void MainWindow::update_count_clasters_clasess()
     for(size_t i = 1; i <= fuzzy_values.size(); ++i) {
         ui->CountClastersClassesComboBox->addItem(QString::fromStdString(std::to_string(i)));
     }
+}
+
+void MainWindow::draw_clasters(const std::vector<fuzzy_logic::fuzzy_value> & values) {
+    ui->ClasterQuickWidget->setClearColor(QColor("#18181b"));
+
+    QScatterSeries *scatterSeries = new QScatterSeries();
+    QQmlEngine *engine = ui->ClasterQuickWidget->engine();
+    QQmlComponent *pointDelegate = new QQmlComponent(engine);
+
+    pointDelegate->setData(R"(
+        import QtQuick 2.0
+        Rectangle {
+        width: 9
+        height: 9
+        radius: 5
+        color: "#ff0000"
+        }
+        )", QUrl());
+    scatterSeries->setPointDelegate(pointDelegate);
+
+    if(values.empty()) {
+        return;
+    }
+
+    size_t count_clasters = ui->CountClastersClassesComboBox->currentIndex() + 1;
+
+    if(count_clasters <= 0) {
+        return;
+    }
+    std::vector<long double> weights = fuzzy_logic::calculate_weights(fuzzy_values[0].get_alphas());
+    std::vector<std::vector<long double>> dist_matrix = fuzzy_logic::cals_distance_matrix(fuzzy_values, weights);
+    fuzzy_logic::k_mediods_res clasters = fuzzy_logic::k_medoids(dist_matrix, count_clasters, 100, 42);
+
+
+    for(size_t i = 0; i < fuzzy_values.size(); ++i) {
+        scatterSeries->append(i,clasters.labels[i]);
+    }
+
+
+    auto *axisX = new QValueAxis(this);
+    axisX->setRange(-0.2, fuzzy_values.size()-1+0.2);
+    axisX->setTickInterval(1);
+
+    auto *axisY = new QValueAxis(this);
+    axisY->setRange(-0.2, count_clasters - 1 + 0.2);
+    axisY->setTickInterval(1);
+
+    QGraphsTheme *theme = new QGraphsTheme(this);
+
+    theme->setColorScheme(QGraphsTheme::ColorScheme::Dark);
+
+    theme->setBackgroundColor(QColor("#18181b"));
+    theme->setBackgroundVisible(true);
+
+    theme->setPlotAreaBackgroundColor(QColor("#09090b"));
+    theme->setPlotAreaBackgroundVisible(true);
+
+    theme->setLabelBackgroundVisible(false);
+    theme->setLabelTextColor(QColor("#d4d4d8"));
+    ui->ClasterQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
+    ui->ClasterQuickWidget->setInitialProperties({
+        {"seriesList", QVariant::fromValue(QList<QObject*>{scatterSeries})},
+        {"axisX", QVariant::fromValue<QObject*>(axisX)},
+        {"axisY", QVariant::fromValue<QObject*>(axisY)},
+        {"theme", QVariant::fromValue(theme)}
+    });
+
+    ui->ClasterQuickWidget->loadFromModule("QtGraphs", "GraphsView");
+}
+
+
+
+void MainWindow::on_CreateClastersPushButton_clicked()
+{
+    QList<QListWidgetItem*> items = ui->FuzzyValueslistWidget->selectedItems();
+    std::vector<fuzzy_logic::fuzzy_value> values;
+    for(size_t i = 0; i < items.size(); ++i) {
+        values.push_back(fuzzy_values[items[i]->text().toULong()]);
+    }
+    try {
+        draw_clasters(values);
+    } catch(const std::exception & err) {
+        QMessageBox::critical(this, "error", "Выбраны некорректные нечеткие значения: разные альфа уровни");
+    }
 
 }
 

@@ -7,6 +7,7 @@
 #include <QScatterSeries>
 #include <QValueAxis>
 #include <QList>
+#include <QGraphsTheme>
 #include <QVariant>
 #include <QXYSeries>
 #include <QFileDialog>

@@ -186,4 +186,117 @@ namespace fuzzy_logic {
             return w.membership_function(x);
         }, alphas, w.get_max_x());
     }
+
+
+    long double Hausdorff_distance(const std::pair<long double, long double> & first, const std::pair<long double, long double> & second) {
+        return std::max(std::abs(first.first - second.first), std::abs(first.second - second.second));
+    }
+
+    long double distanse(const fuzzy_value & first, const fuzzy_value & second, const std::vector<long double> & w) {
+        if (first.get_alphas() != second.get_alphas()) {
+            throw std::runtime_error("альфа уровни должны быть одинаковые");
+        }
+        long double sum = 0;
+        for(size_t i = 0; i < first.get_alphas().size(); ++i) {
+            sum += w[i] * Hausdorff_distance(first.get_alphas_intervals()[i], second.get_alphas_intervals()[i]);
+        }
+        return sum;
+    }
+
+    std::vector<std::vector<long double>> cals_distance_matrix(const std::vector<fuzzy_value> & data, const std::vector<long double> & w) {
+        size_t n = data.size();
+        std::vector<std::vector<long double>> distance_matrix(n, std::vector<long double>(n, 0.0));
+        for(size_t i = 0; i < n; ++i) {
+            for(size_t j = i+1; j < n; ++j) {
+                long double dist = distanse(data[i], data[j], w);
+                distance_matrix[i][j] = dist;
+                distance_matrix[j][i] = dist;
+            }
+        }
+        return distance_matrix;
+    }
+
+    std::vector<long double> calculate_weights(const std::vector<long double> alphas) {
+        std::vector<long double> w(alphas.size(), 0.0);
+        for(size_t i = 0; i < alphas.size(); ++i) {
+            long double left = (i == 0) ? 0.0 : (alphas[i] - alphas[i-1]);
+            long double right = (i == alphas.size()-1) ? 0.0 : (alphas[i+1] - alphas[i]);
+            w[i] = 0.5 * (left + right);
+        }
+        long double sum = std::accumulate(w.begin(), w.end(), 0.0);
+        for(size_t i = 0; i < alphas.size(); ++i) {
+            w[i] /= sum;
+        }
+        return w;
+    }
+
+    k_mediods_res k_medoids(const std::vector<std::vector<long double>> &dist, size_t k, size_t max_iter, int seed) {
+        size_t n = dist.size();
+        std::mt19937 gen(seed);
+        std::vector<int> idx(n);
+        std::iota(idx.begin(), idx.end(), 0);
+        std::shuffle(idx.begin(), idx.end(), gen);
+        std::vector<int> medoids(idx.begin(), idx.begin() + k);
+        std::vector<int> labels(n, -1);
+        std::vector<long double> best_dist(n, 0.0);
+
+        for(size_t iter = 0; iter < max_iter; ++iter) {
+            bool changed = false;
+            for(size_t i = 0; i < n; ++i) {
+                int best_c = 0;
+                long double best_d = dist[i][medoids[0]];
+                for(int c = 1; c < k; ++c) {
+                    long double d = dist[i][medoids[c]];
+                    if(d < best_d) {
+                        best_c = c;
+                        best_d = d;
+                    }
+                }
+                if (labels[i] != best_c) {
+                    labels[i] = best_c;
+                    changed = true;
+                }
+                best_dist[i] = best_d;
+            }
+
+            for(int c = 0; c < k; ++c) {
+                std::vector<int> members;
+                for(size_t i = 0; i < n;++i) {
+                    if(labels[i] == c) {
+                        members.push_back(i);
+                    }
+                }
+                if(members.empty()) {
+                    continue;
+                }
+
+                int best_medoid = medoids[c];
+                long double best_cost = std::numeric_limits<long double>::max();
+                for(int cand : members) {
+                    long double cost = 0.0;
+                    for(int other : members) {
+                        cost += dist[cand][other];
+                    }
+                    if (cost < best_cost) {
+                        best_cost = cost;
+                        best_medoid = cand;
+                    }
+                }
+
+                if(best_medoid != medoids[c]) {
+                    medoids[c] = best_medoid;
+                    changed = true;
+                }
+            }
+            if(!changed) {
+                break;
+            }
+        }
+        long double cost = 0.0;
+        for(size_t i = 0; i < n; ++i) {
+            cost += dist[i][medoids[labels[i]]];
+        }
+        return {labels, medoids, cost};
+    }
+
 }

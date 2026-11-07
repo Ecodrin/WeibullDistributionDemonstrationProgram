@@ -1,6 +1,5 @@
 #include "createfuzzyvaluewindow.h"
 #include "ui_createfuzzyvaluewindow.h"
-#include <QGraphsTheme>
 
 CreateFuzzyValueWindow::CreateFuzzyValueWindow(fuzzy_logic::fuzzy_value val, QWidget *parent, bool read_only)
     : QDialog(parent), value{val}, read_only{read_only}
@@ -118,7 +117,7 @@ void CreateFuzzyValueWindow::draw_graphic()
         {"seriesList", QVariant::fromValue(QList<QObject*>{scatterSeries})},
         {"axisX", QVariant::fromValue<QObject*>(axisX)},
         {"axisY", QVariant::fromValue<QObject*>(axisY)},
-        {"theme", QVariant::fromValue(theme)} // Передаем объект темы
+        {"theme", QVariant::fromValue(theme)}
     });
 
     ui->PlotValueQuickWidget->loadFromModule("QtGraphs", "GraphsView");

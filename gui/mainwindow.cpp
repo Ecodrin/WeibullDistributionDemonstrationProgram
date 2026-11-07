@@ -147,17 +147,25 @@ void MainWindow::draw_clasters(const std::vector<fuzzy_logic::fuzzy_value> & val
 
 
     for(size_t i = 0; i < fuzzy_values.size(); ++i) {
-        scatterSeries->append(i,clasters.labels[i]);
+        scatterSeries->append(i,clasters.labels[i] > 0 ? clasters.labels[i] : count_clasters);
     }
 
 
     auto *axisX = new QValueAxis(this);
-    axisX->setRange(-0.2, fuzzy_values.size()-1+0.2);
     axisX->setTickInterval(1);
+    axisX->setRange(-0.5, values.size()-0.5);
+    axisX->setTickAnchor(0);
+    axisX->setLabelFormat("%.0f");
+    axisX->setTitleText("Нечеткие значения");
+    axisX->setLabelsAngle(270.0);
+
 
     auto *axisY = new QValueAxis(this);
-    axisY->setRange(-0.2, count_clasters - 1 + 0.2);
     axisY->setTickInterval(1);
+    axisY->setTickAnchor(0);
+    axisY->setLabelFormat("%.0f");
+    axisY->setRange(0.5, count_clasters + 0.5);
+    axisY->setTitleText("Кластеры");
 
     QGraphsTheme *theme = new QGraphsTheme(this);
 
@@ -181,6 +189,7 @@ void MainWindow::draw_clasters(const std::vector<fuzzy_logic::fuzzy_value> & val
     });
 
     ui->ClasterQuickWidget->loadFromModule("QtGraphs", "GraphsView");
+
 }
 
 

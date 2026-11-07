@@ -9,6 +9,7 @@
 #include <QScatterSeries>
 #include <QValueAxis>
 #include <QGraphsTheme>
+
 #include "createfuzzyvaluewindow.h"
 
 QT_BEGIN_NAMESPACE

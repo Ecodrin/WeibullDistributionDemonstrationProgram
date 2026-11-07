@@ -13,7 +13,6 @@
 #include <QFileDialog>
 
 #include <sstream>
-#include <format>
 #include <string>
 
 #include "fuzzy_logic.hpp"

@@ -14,14 +14,6 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QFile styleFile(":/styles.css");
-    if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        app.setStyleSheet(QString::fromUtf8(styleFile.readAll()));
-    } else {
-        qCritical() << "Не удалось загрузить :/styles.css";
-    }
-
-
 
     MainWindow window;
     window.show();

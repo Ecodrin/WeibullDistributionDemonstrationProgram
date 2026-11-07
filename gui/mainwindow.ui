@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Работа с нечеткими величинами</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -40,45 +40,27 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
-       <widget class="QSpinBox" name="CountGenerateFuzzyValuesspinBox">
-        <property name="minimum">
-         <number>10</number>
-        </property>
-        <property name="maximum">
-         <number>400</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QPushButton" name="CreateFuzzyValueButton">
-        <property name="text">
-         <string>Создать</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QPushButton" name="GenerateFuzzyValuesButton">
-        <property name="text">
-         <string>Сгенерировать</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="2">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item alignment="Qt::AlignmentFlag::AlignBottom">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Арифметические операции</string>
+       <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0,0,0,0,0">
+        <property name="sizeConstraint">
+         <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+        </property>
+        <item row="5" column="0">
+         <widget class="QComboBox" name="CountClastersClassesComboBox">
+          <property name="currentText">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Количество классов</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout">
-          <item alignment="Qt::AlignmentFlag::AlignTop">
+          <item>
            <widget class="QComboBox" name="BaseOperationAcomboBox"/>
           </item>
-          <item alignment="Qt::AlignmentFlag::AlignTop">
+          <item>
            <widget class="QComboBox" name="BaseOperatrioncomboBox">
             <item>
              <property name="text">
@@ -102,7 +84,7 @@
             </item>
            </widget>
           </item>
-          <item alignment="Qt::AlignmentFlag::AlignTop">
+          <item>
            <widget class="QComboBox" name="BaseOperationBcomboBox"/>
           </item>
           <item alignment="Qt::AlignmentFlag::AlignTop">
@@ -114,48 +96,83 @@
           </item>
          </layout>
         </item>
-        <item alignment="Qt::AlignmentFlag::AlignBottom">
+        <item row="5" column="1">
+         <widget class="QPushButton" name="CreateClastersPushButton">
+          <property name="text">
+           <string>Разбить по кластерам</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
          <widget class="QLabel" name="label_3">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>200</height>
+           </size>
+          </property>
           <property name="text">
            <string>Кластерный анализ</string>
           </property>
          </widget>
         </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="QComboBox" name="CountClastersClassesComboBox">
-            <property name="currentText">
-             <string/>
-            </property>
-            <property name="placeholderText">
-             <string>Количество классов</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="CreateClastersPushButton">
-            <property name="text">
-             <string>Разбить по кластерам</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QQuickWidget" name="ClasterQuickWidget">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>300</height>
-             </size>
-            </property>
-            <property name="resizeMode">
-             <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Арифметические операции</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0" colspan="2">
+         <widget class="QQuickWidget" name="ClasterQuickWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>300</height>
+           </size>
+          </property>
+          <property name="resizeMode">
+           <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
+          </property>
+         </widget>
         </item>
        </layout>
+      </item>
+      <item row="5" column="2">
+       <widget class="QSpinBox" name="CountGenerateFuzzyValuesspinBox">
+        <property name="minimum">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <number>400</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="CreateFuzzyValueButton">
+        <property name="text">
+         <string>Создать</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QPushButton" name="GenerateFuzzyValuesButton">
+        <property name="text">
+         <string>Сгенерировать</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

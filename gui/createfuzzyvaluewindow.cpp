@@ -48,8 +48,8 @@ void CreateFuzzyValueWindow::on_GenerateRandomFuzzyValueButton_clicked()
     std::vector<long double> alphas((std::istream_iterator<long double>(iss)),
                                     std::istream_iterator<long double>());
     for(size_t i = 0; i < alphas.size(); ++i) {
-        if (alphas[i] <= 0 || (i > 1 && i < alphas.size()-1 && (alphas[i-1] > alphas[i] || alphas[i+1] < alphas[i]))) {
-            QMessageBox::critical(this, "error", "incorrect alpa");
+        if (alphas[i] <= 0 || (i >= 1 && alphas[i-1] > alphas[i])) {
+            QMessageBox::critical(this, "error", "incorrect alpha");
             return;
         }
     }

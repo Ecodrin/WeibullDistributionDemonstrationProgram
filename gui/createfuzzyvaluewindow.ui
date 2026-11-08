@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_4">
+    <layout class="QGridLayout" name="gridLayout_4" columnstretch="0,0,0" columnminimumwidth="0,0,0">
      <item row="1" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout"/>
      </item>
@@ -49,6 +49,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QPushButton" name="CreateFuzzyValueButton">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Программа создаст нечеткую величину по заданным параметрам&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Создать</string>
            </property>
@@ -98,6 +101,12 @@
      </item>
      <item row="0" column="0">
       <widget class="QQuickWidget" name="PlotValueQuickWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="resizeMode">
         <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
        </property>
@@ -120,6 +129,12 @@
        </item>
        <item alignment="Qt::AlignmentFlag::AlignHCenter">
         <widget class="QTableWidget" name="AlphasTableWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>203</width>

@@ -28,10 +28,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         createfuzzyvaluewindow.h
         createfuzzyvaluewindow.cpp
         createfuzzyvaluewindow.ui
+
+
     )
     # qt_add_resources(gui "app_resources"
     #     PREFIX "/"
-    #     FILES styles.css
+    #     FILES styles.qss
     # )
 
 

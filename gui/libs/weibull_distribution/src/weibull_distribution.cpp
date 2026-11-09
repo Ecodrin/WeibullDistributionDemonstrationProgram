@@ -1,5 +1,7 @@
 #include "weibull_distribution.hpp"
 
+#include <algorithm>
+
 namespace weibull_distribution_math {
     weibull_distribution::weibull_distribution(long double k, long double lambda) : k{k}, lambda{lambda} {
 
@@ -12,7 +14,7 @@ namespace weibull_distribution_math {
         return (k / lambda) * std::pow(x / lambda, k-1) * std::exp(-std::pow(x / lambda, k));
     }
 
-    long double weibull_distribution::membership_function(long double x) {
+    long double weibull_distribution::membership_function(long double x) const {
         if(x < 1e-10L) {
             return 0;
         }
@@ -30,6 +32,12 @@ namespace weibull_distribution_math {
             return lambda * std::pow((k-1) / k, 1/k);
         }
         return lambda * std::pow(std::log(2.0L), 1.0L / k);
+    }
+
+    long double weibull_distribution::sample(std::mt19937 &generator) const {
+        std::uniform_real_distribution<long double> uniform(0.0L, 1.0L);
+        const long double u = std::max(uniform(generator), 1e-12L);
+        return lambda * std::pow(-std::log(1.0L - u), 1.0L / k);
     }
 
     long double dichotomy_method(long double a, long double b, std::function<long double(long double)> f, int max_steps, long double eps) {

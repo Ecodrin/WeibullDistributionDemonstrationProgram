@@ -12,8 +12,9 @@ namespace weibull_distribution_math {
         long double probability_density_function(long double x);
     public:
         weibull_distribution(long double k=1, long double lambda=0.5);
-        long double membership_function(long double x);
+        long double membership_function(long double x) const;
         long double get_max_x() const;
+        long double sample(std::mt19937 &generator) const;
     };
 
     long double dichotomy_method(long double a, long double b, std::function<long double(long double)> f, int max_steps=100, long double eps=0.01);

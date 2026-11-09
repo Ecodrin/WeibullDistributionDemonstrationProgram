@@ -17,6 +17,12 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        intervalfilterdialog.h
+        intervalfilterdialog.cpp
+        clusteringdialog.h
+        clusteringdialog.cpp
+        arithmeticdialog.h
+        arithmeticdialog.cpp
 )
 
 add_subdirectory(libs)
@@ -25,11 +31,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(gui
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        createfuzzyvaluewindow.h
-        createfuzzyvaluewindow.cpp
-        createfuzzyvaluewindow.ui
-
-
     )
     # qt_add_resources(gui "app_resources"
     #     PREFIX "/"

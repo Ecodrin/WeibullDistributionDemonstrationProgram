@@ -3,14 +3,10 @@
 
 #include <vector>
 
-#include <QListWidget>
 #include <QMainWindow>
-#include <QQuickWidget>
-#include <QScatterSeries>
-#include <QValueAxis>
-#include <QGraphsTheme>
 
-#include "createfuzzyvaluewindow.h"
+#include "fuzzy_logic.hpp"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,25 +23,16 @@ public:
     ~MainWindow() override;
 
 private slots:
-    void on_CreateFuzzyValueButton_clicked();
     void update_fuzzy_values_list();
-    void add_fuzzy_value_to_list(fuzzy_logic::fuzzy_value val);
-
-
-
     void on_GenerateFuzzyValuesButton_clicked();
-
-    void on_FuzzyValueslistWidget_itemDoubleClicked(QListWidgetItem *item);
-    void update_values_in_base_operations();
-
-    void on_calculateButton_clicked();
-    void update_count_clasters_clasess();
-    void draw_clasters(const std::vector<fuzzy_logic::fuzzy_value> & values);
-
-
+    void on_ClearFuzzyValuesButton_clicked();
+    void on_OpenArithmeticButton_clicked();
     void on_CreateClastersPushButton_clicked();
+    void on_ShowAlphaCutButton_clicked();
 
 private:
+    void update_overall_graph();
+
     Ui::MainWindow *ui;
 
     std::vector<fuzzy_logic::fuzzy_value> fuzzy_values;

@@ -1,302 +1,212 @@
 #include "../include/fuzzy_logic.hpp"
 
+#include <stdexcept>
+
 namespace fuzzy_logic {
-    fuzzy_value::fuzzy_value(const std::function<long double(long double)> & membership_function, const std::vector <long double> & alphas, long double x_max) :alphas{alphas} {
-        for(int i = 0; i < alphas.size();++i) {
-            long double step = 1.0, left = 0;
-            while(membership_function(left) > alphas[i]) {
-                step *= 2.0L;
-                left = x_max - step;
-            }
-            long double L = weibull_distribution_math::dichotomy_method(left, x_max, [&](long double x) {
-                return membership_function(x) - alphas[i];
-            });
-            long double right = 2 * x_max;
-            while(membership_function(right) > alphas[i]) {
-                right *= 2.0;
-            }
-            long double R = weibull_distribution_math::dichotomy_method(x_max, right, [&](long double x) {
-                return membership_function(x) - alphas[i];
-            });
-            intervals.push_back({L, R});
-        }
-        this->alphas.push_back(1);
-        intervals.push_back({x_max, x_max});
-    }
 
-    fuzzy_value::fuzzy_value(const fuzzy_value &value) : alphas{value.alphas}, intervals{value.intervals} {}
-
-    std::vector<std::pair<long double, long double>> fuzzy_value::get_alphas_intervals() const {
-        return intervals;
+fuzzy_value::fuzzy_value(long double left, long double right) {
+    if (!std::isfinite(left) || !std::isfinite(right) || left > right) {
+        throw std::invalid_argument("границы отрезка должны быть конечными и left <= right");
     }
-
-    std::vector<long double> fuzzy_value::get_alphas() const {
-        return alphas;
-    }
-
-    long double fuzzy_value::calc_membership(long double x) const {
-        long double top = intervals[intervals.size()-1].first;
-        if (x < top) {
-            if (x < intervals[0].first) {
-                if (intervals[0].first < 1e-10) {
-                    return 0;
-                }
-                long double v = x / intervals[0].first * alphas[0];
-                if (v < 1e-10) {
-                    return 0;
-                }
-                return v;
-            }
-            for(int i = 1; i < intervals.size() ; ++i) {
-                if (x <= intervals[i].first) {
-                    long double dx = intervals[i].first - intervals[i-1].first;
-                    if (dx < 1e-10L) {
-                        return alphas[i];
-                    }
-                    return alphas[i-1] + (x - intervals[i-1].first) / dx * (alphas[i] - alphas[i-1]);
-                }
-            }
-        } else {
-            if (x > intervals[0].second) {
-                long double dx = intervals[0].second - intervals[1].second;
-                if(dx < 1e-10L) {
-                    return 0.0;
-                }
-                long double slope = (alphas[0]-alphas[1]) / dx;
-                long double v = alphas[0] + slope * (x - intervals[0].second);
-                // if (v < 1e-10) {
-                //     return 0;
-                // }
-                return v;
-            }
-            for(int i = intervals.size()-1; i > 0 ; --i) {
-                if (x >= intervals[i].second && x <= intervals[i-1].second) {
-                    long double dx = intervals[i-1].second - intervals[i].second;
-                    if (dx < 1e-10L) {
-                        return alphas[i];
-                    }
-                    return alphas[i] + (x - intervals[i].second) / dx * (alphas[i-1] - alphas[i]);
-                }
-            }
-        }
-        return 0;
-    }
-    fuzzy_value &fuzzy_value::operator=(const fuzzy_value &other) {
-        if (this != &other) {
-            intervals = other.intervals;
-            alphas = other.alphas;
-        }
-        return *this;
-    }
-
-
-    fuzzy_value& fuzzy_value::operator=(fuzzy_value && other) {
-        if (this != &other) {
-            intervals = other.intervals;
-            alphas = other.alphas;
-            other.intervals = {};
-        }
-        return *this;
-    }
-
-    fuzzy_value &fuzzy_value::operator+=(const fuzzy_value &other) {
-        if (alphas != other.alphas) {
-            throw std::runtime_error("incorrect alphas");
-        }
-        for(size_t i = 0; i < intervals.size();++i) {
-            intervals[i].first += other.intervals[i].first;
-            intervals[i].second += other.intervals[i].second;
-        }
-        return *this;
-    }
-    fuzzy_value &fuzzy_value::operator-=(const fuzzy_value &other) {
-        if (alphas != other.alphas) {
-            throw std::runtime_error("incorrect alphas");
-        }
-        for(size_t i = 0; i < intervals.size();++i) {
-            intervals[i].first -= other.intervals[i].second;
-            intervals[i].second -= other.intervals[i].first;
-        }
-        return *this;
-    }
-    fuzzy_value &fuzzy_value::operator*=(const fuzzy_value &other) {
-        if (alphas != other.alphas) {
-            throw std::runtime_error("incorrect alphas");
-        }
-        for(size_t i = 0; i < intervals.size(); ++i) {
-            std::vector<long double> values = {intervals[i].first * other.intervals[i].first, intervals[i].first * other.intervals[i].second, 
-                                        intervals[i].second * other.intervals[i].first, intervals[i].second * other.intervals[i].second};
-            intervals[i].first = *std::min_element(values.begin(), values.end());
-            intervals[i].second = *std::max_element(values.begin(), values.end());
-        }
-        return *this;
-    }
-
-    fuzzy_value &fuzzy_value::operator/=(const fuzzy_value &other) {
-        if (alphas != other.alphas) {
-            throw std::runtime_error("incorrect alphas");
-        }
-        for(size_t i = 0; i < intervals.size(); ++i) {
-            std::vector<long double> values = {intervals[i].first / other.intervals[i].first, intervals[i].first / other.intervals[i].second, 
-                                        intervals[i].second / other.intervals[i].first, intervals[i].second / other.intervals[i].second};
-            intervals[i].first = *std::min_element(values.begin(), values.end());
-            intervals[i].second = *std::max_element(values.begin(), values.end());
-        }
-        return *this;
-    }
-
-    void fuzzy_value::save(const std::string &filename) const
-    {
-        std::ofstream out;
-        out.open(filename);
-        out << (*this);
-        out.close();
-    }
-    std::ostream &operator<<(std::ostream &out, const fuzzy_value &value)
-    {
-        out << "================================================\n";
-        for(size_t i = 0; i < value.alphas.size(); ++i) {
-            out << std::setw(10) << std::setfill(' ') << value.alphas[i] 
-                    << std::setw(16) << std::setfill(' ') << value.intervals[i].first 
-                    << std::setw(16) << std::setfill(' ') << value.intervals[i].second << std::endl;
-        }
-        out << "================================================\n" << std::endl;
-        return out;
-    }
-    fuzzy_value operator+(const fuzzy_value &first, const fuzzy_value &second) {
-        fuzzy_value copy(first);
-        return copy += second;
-    }
-    fuzzy_value operator-(const fuzzy_value &first, const fuzzy_value &second) {
-        fuzzy_value copy(first);
-        return copy -= second;
-    }
-    fuzzy_value operator*(const fuzzy_value &first, const fuzzy_value &second) {
-        fuzzy_value copy(first);
-        return copy *= second;
-    }
-    fuzzy_value operator/(const fuzzy_value &first, const fuzzy_value &second) {
-        fuzzy_value copy(first);
-        return copy /= second;
-    }
-
-    fuzzy_value generate_random_fuzzy_value(const std::vector<long double> &alphas) {
-        weibull_distribution_math::weibull_distribution w = weibull_distribution_math::generate_random_weibull_distribution();
-        return fuzzy_value([&](long double x){
-            return w.membership_function(x);
-        }, alphas, w.get_max_x());
-    }
-
-
-    long double Hausdorff_distance(const std::pair<long double, long double> & first, const std::pair<long double, long double> & second) {
-        return std::max(std::abs(first.first - second.first), std::abs(first.second - second.second));
-    }
-
-    long double distanse(const fuzzy_value & first, const fuzzy_value & second, const std::vector<long double> & w) {
-        if (first.get_alphas() != second.get_alphas()) {
-            throw std::runtime_error("альфа уровни должны быть одинаковые");
-        }
-        long double sum = 0;
-        for(size_t i = 0; i < first.get_alphas().size(); ++i) {
-            sum += w[i] * Hausdorff_distance(first.get_alphas_intervals()[i], second.get_alphas_intervals()[i]);
-        }
-        return sum;
-    }
-
-    std::vector<std::vector<long double>> cals_distance_matrix(const std::vector<fuzzy_value> & data, const std::vector<long double> & w) {
-        size_t n = data.size();
-        std::vector<std::vector<long double>> distance_matrix(n, std::vector<long double>(n, 0.0));
-        for(size_t i = 0; i < n; ++i) {
-            for(size_t j = i+1; j < n; ++j) {
-                long double dist = distanse(data[i], data[j], w);
-                distance_matrix[i][j] = dist;
-                distance_matrix[j][i] = dist;
-            }
-        }
-        return distance_matrix;
-    }
-
-    std::vector<long double> calculate_weights(const std::vector<long double> alphas) {
-        std::vector<long double> w(alphas.size(), 0.0);
-        for(size_t i = 0; i < alphas.size(); ++i) {
-            long double left = (i == 0) ? 0.0 : (alphas[i] - alphas[i-1]);
-            long double right = (i == alphas.size()-1) ? 0.0 : (alphas[i+1] - alphas[i]);
-            w[i] = 0.5 * (left + right);
-        }
-        long double sum = std::accumulate(w.begin(), w.end(), 0.0);
-        for(size_t i = 0; i < alphas.size(); ++i) {
-            w[i] /= sum;
-        }
-        return w;
-    }
-
-    k_mediods_res k_medoids(const std::vector<std::vector<long double>> &dist, size_t k, size_t max_iter, int seed) {
-        size_t n = dist.size();
-        std::mt19937 gen(seed);
-        std::vector<int> idx(n);
-        std::iota(idx.begin(), idx.end(), 0);
-        std::shuffle(idx.begin(), idx.end(), gen);
-        std::vector<int> medoids(idx.begin(), idx.begin() + k);
-        std::vector<int> labels(n, -1);
-        std::vector<long double> best_dist(n, 0.0);
-
-        for(size_t iter = 0; iter < max_iter; ++iter) {
-            bool changed = false;
-            for(size_t i = 0; i < n; ++i) {
-                int best_c = 0;
-                long double best_d = dist[i][medoids[0]];
-                for(int c = 1; c < k; ++c) {
-                    long double d = dist[i][medoids[c]];
-                    if(d < best_d) {
-                        best_c = c;
-                        best_d = d;
-                    }
-                }
-                if (labels[i] != best_c) {
-                    labels[i] = best_c;
-                    changed = true;
-                }
-                best_dist[i] = best_d;
-            }
-
-            for(int c = 0; c < k; ++c) {
-                std::vector<int> members;
-                for(size_t i = 0; i < n;++i) {
-                    if(labels[i] == c) {
-                        members.push_back(i);
-                    }
-                }
-                if(members.empty()) {
-                    continue;
-                }
-
-                int best_medoid = medoids[c];
-                long double best_cost = std::numeric_limits<long double>::max();
-                for(int cand : members) {
-                    long double cost = 0.0;
-                    for(int other : members) {
-                        cost += dist[cand][other];
-                    }
-                    if (cost < best_cost) {
-                        best_cost = cost;
-                        best_medoid = cand;
-                    }
-                }
-
-                if(best_medoid != medoids[c]) {
-                    medoids[c] = best_medoid;
-                    changed = true;
-                }
-            }
-            if(!changed) {
-                break;
-            }
-        }
-        long double cost = 0.0;
-        for(size_t i = 0; i < n; ++i) {
-            cost += dist[i][medoids[labels[i]]];
-        }
-        return {labels, medoids, cost};
-    }
-
+    interval = {left, right};
 }
+
+fuzzy_value::fuzzy_value(const std::function<long double(long double)> &membership_function,
+                         long double x_max) {
+    if (!membership_function || !std::isfinite(x_max) || x_max < 0.0L) {
+        throw std::invalid_argument("некорректные параметры функции принадлежности");
+    }
+    long double left = 0.0L;
+    long double right = std::max(x_max, 1.0L);
+    while (membership_function(right) > 1e-4L && right < 1e6L) {
+        right *= 2.0L;
+    }
+    interval = {left, right};
+}
+
+long double fuzzy_value::calc_membership(long double x) const noexcept {
+    return x >= interval.first && x <= interval.second ? 1.0L : 0.0L;
+}
+
+fuzzy_value &fuzzy_value::operator+=(const fuzzy_value &other) {
+    interval.first += other.interval.first;
+    interval.second += other.interval.second;
+    return *this;
+}
+
+fuzzy_value &fuzzy_value::operator-=(const fuzzy_value &other) {
+    const auto old = interval;
+    interval = {old.first - other.interval.second, old.second - other.interval.first};
+    return *this;
+}
+
+fuzzy_value &fuzzy_value::operator*=(const fuzzy_value &other) {
+    const std::vector<long double> values{
+        interval.first * other.interval.first, interval.first * other.interval.second,
+        interval.second * other.interval.first, interval.second * other.interval.second};
+    interval = {*std::min_element(values.begin(), values.end()),
+                *std::max_element(values.begin(), values.end())};
+    return *this;
+}
+
+fuzzy_value &fuzzy_value::operator/=(const fuzzy_value &other) {
+    if (other.interval.first <= 0.0L && other.interval.second >= 0.0L) {
+        throw std::domain_error("деление на отрезок, содержащий ноль");
+    }
+    const std::vector<long double> values{
+        interval.first / other.interval.first, interval.first / other.interval.second,
+        interval.second / other.interval.first, interval.second / other.interval.second};
+    interval = {*std::min_element(values.begin(), values.end()),
+                *std::max_element(values.begin(), values.end())};
+    return *this;
+}
+
+void fuzzy_value::save(const std::string &filename) const {
+    std::ofstream out(filename);
+    if (!out) {
+        throw std::runtime_error("не удалось открыть файл журнала");
+    }
+    out << *this;
+}
+
+std::ostream &operator<<(std::ostream &out, const fuzzy_value &value) {
+    out << "[" << std::setprecision(10) << value.interval.first << "; "
+        << value.interval.second << "]";
+    return out;
+}
+
+fuzzy_value operator+(const fuzzy_value &first, const fuzzy_value &second) {
+    fuzzy_value result(first);
+    return result += second;
+}
+fuzzy_value operator-(const fuzzy_value &first, const fuzzy_value &second) {
+    fuzzy_value result(first);
+    return result -= second;
+}
+fuzzy_value operator*(const fuzzy_value &first, const fuzzy_value &second) {
+    fuzzy_value result(first);
+    return result *= second;
+}
+fuzzy_value operator/(const fuzzy_value &first, const fuzzy_value &second) {
+    fuzzy_value result(first);
+    return result /= second;
+}
+
+int compare(const fuzzy_value &first, const fuzzy_value &second) noexcept {
+    if (first.right() < second.left()) return -1;
+    if (first.left() > second.right()) return 1;
+    return 0;
+}
+
+long double Hausdorff_distance(const std::pair<long double, long double> &first,
+                               const std::pair<long double, long double> &second) {
+    return std::max(std::abs(first.first - second.first),
+                    std::abs(first.second - second.second));
+}
+
+long double distanse(const fuzzy_value &first, const fuzzy_value &second) {
+    return Hausdorff_distance(first.get_interval(), second.get_interval());
+}
+
+std::vector<std::vector<long double>> cals_distance_matrix(
+    const std::vector<fuzzy_value> &data) {
+    std::vector<std::vector<long double>> result(data.size(),
+                                                  std::vector<long double>(data.size()));
+    for (size_t i = 0; i < data.size(); ++i)
+        for (size_t j = i + 1; j < data.size(); ++j)
+            result[i][j] = result[j][i] = distanse(data[i], data[j]);
+    return result;
+}
+
+
+long double generated_membership(long double x, long double k, long double lambda) {
+    weibull_distribution_math::weibull_distribution w(k, lambda);
+    return w.membership_function(x);
+}
+
+fuzzy_value generate_random_fuzzy_value(long double k, long double lambda) {
+    static std::mt19937 generator(std::random_device{}());
+    const auto &distribution = weibull_distribution_math::weibull_distribution(k, lambda);
+    const long double upper_bound = std::max(1.0L, distribution.get_max_x() * 3.0L);
+    long double center = distribution.sample(generator);
+    while (center > upper_bound) {
+        center = distribution.sample(generator);
+    }
+    std::uniform_real_distribution<long double> width_factor(0.03L, 0.18L);
+    const long double half_width = std::max(
+        0.05L, distribution.get_max_x() * width_factor(generator));
+    return fuzzy_value(std::max(0.0L, center - half_width), center + half_width);
+}
+
+k_mediods_res k_medoids(const std::vector<std::vector<long double>> &dist, size_t k,
+                         size_t max_iter, int seed) {
+    const size_t n = dist.size();
+    if (n == 0 || k == 0 || k > n) throw std::invalid_argument("некорректное число кластеров");
+    std::mt19937 gen(seed);
+    std::vector<int> medoids;
+    medoids.reserve(k);
+    std::uniform_int_distribution<size_t> first_distribution(0, n - 1);
+    medoids.push_back(static_cast<int>(first_distribution(gen)));
+    while (medoids.size() < k) {
+        int next = -1;
+        long double greatest_distance = -1.0L;
+        for (size_t candidate = 0; candidate < n; ++candidate) {
+            if (std::find(medoids.begin(), medoids.end(),
+                          static_cast<int>(candidate)) != medoids.end()) continue;
+            long double nearest = std::numeric_limits<long double>::max();
+            for (const int medoid : medoids) {
+                nearest = std::min(nearest, dist[candidate][medoid]);
+            }
+            if (nearest > greatest_distance) {
+                greatest_distance = nearest;
+                next = static_cast<int>(candidate);
+            }
+        }
+        medoids.push_back(next);
+    }
+    std::vector<int> labels(n, -1);
+
+    for (size_t iteration = 0; iteration < max_iter; ++iteration) {
+        bool changed = false;
+        for (size_t i = 0; i < n; ++i) {
+            int best = 0;
+            for (size_t c = 1; c < k; ++c)
+                if (dist[i][medoids[c]] < dist[i][medoids[best]]) best = static_cast<int>(c);
+            if (labels[i] != best) { labels[i] = best; changed = true; }
+        }
+        for (size_t c = 0; c < k; ++c) {
+            int best = medoids[c];
+            long double best_cost = std::numeric_limits<long double>::max();
+            for (size_t candidate = 0; candidate < n; ++candidate) {
+                if (labels[candidate] != static_cast<int>(c)) continue;
+                long double cost = 0.0L;
+                for (size_t other = 0; other < n; ++other)
+                    if (labels[other] == static_cast<int>(c)) cost += dist[candidate][other];
+                if (cost < best_cost) { best_cost = cost; best = static_cast<int>(candidate); }
+            }
+            if (best_cost == std::numeric_limits<long double>::max()) {
+                int farthest = 0;
+                long double farthest_distance = -1.0L;
+                for (size_t candidate = 0; candidate < n; ++candidate) {
+                    if (std::find(medoids.begin(), medoids.end(),
+                                  static_cast<int>(candidate)) != medoids.end()) continue;
+                    long double nearest = std::numeric_limits<long double>::max();
+                    for (const int medoid : medoids) {
+                        nearest = std::min(nearest, dist[candidate][medoid]);
+                    }
+                    if (nearest > farthest_distance) {
+                        farthest_distance = nearest;
+                        farthest = static_cast<int>(candidate);
+                    }
+                }
+                best = farthest;
+            }
+            if (medoids[c] != best) { medoids[c] = best; changed = true; }
+        }
+        if (!changed) break;
+    }
+    long double cost = 0.0L;
+    for (size_t i = 0; i < n; ++i) cost += dist[i][medoids[labels[i]]];
+    return {labels, medoids, cost};
+}
+} // namespace fuzzy_logic

@@ -36,8 +36,8 @@ ClusteringDialog::ClusteringDialog(
     seed_->setRange(0, 1000000);
     seed_->setValue(42);
     metric_ = new QComboBox(this);
-    metric_->addItems({"Хаусдорф для [A; B]", "Центр и ширина", "Левая граница A",
-                      "Правая граница B", "Евклидово расстояние A/B"});
+    metric_->addItems({"Хаусдорф для [A; B]", "Центр и ширина",
+                      "Евклидово расстояние A/B"});
     form->addRow("Количество кластеров:", clusters_);
     form->addRow("Максимум итераций:", iterations_);
     form->addRow("Seed:", seed_);
@@ -78,10 +78,6 @@ void ClusteringDialog::run_clustering()
                 const long double dc = center_a - center_b;
                 const long double dw = width_a - width_b;
                 d = std::sqrt(dc * dc + dw * dw);
-            } else if (metric_->currentIndex() == 2) {
-                d = std::abs(a.first - b.first);
-            } else if (metric_->currentIndex() == 3) {
-                d = std::abs(a.second - b.second);
             } else {
                 const long double da = a.first - b.first;
                 const long double db = a.second - b.second;
@@ -118,9 +114,9 @@ void ClusteringDialog::run_clustering()
         series.push_back(cluster_series);
         series_list.append(cluster_series);
     }
+    long double min_center = std::numeric_limits<long double>::max();
+    long double max_center = std::numeric_limits<long double>::lowest();
     long double max_metric = 0.0L;
-    long double min_width = std::numeric_limits<long double>::max();
-    long double max_width = std::numeric_limits<long double>::lowest();
     for (size_t i = 0; i < values_.size(); ++i) {
         const int cluster = clustering.labels[i];
         if (cluster < 0 || static_cast<size_t>(cluster) >= series.size()) {
@@ -130,28 +126,28 @@ void ClusteringDialog::run_clustering()
         const long double metric = distance[i][
             clustering.medoids[cluster_index]];
         const auto interval = values_[i].get_interval();
-        const long double width = interval.second - interval.first;
+        const long double center = (interval.first + interval.second) / 2.0L;
+        min_center = std::min(min_center, center);
+        max_center = std::max(max_center, center);
         max_metric = std::max(max_metric, metric);
-        min_width = std::min(min_width, width);
-        max_width = std::max(max_width, width);
         series[static_cast<size_t>(cluster)]->append(
-            static_cast<double>(metric),
-            static_cast<double>(width));
+            static_cast<double>(center),
+            static_cast<double>(metric));
     }
     auto *axis_x = new QValueAxis(this);
-    axis_x->setTitleText("Метрика до медоида");
-    const long double x_padding = std::max(0.0001L, max_metric * 0.1L);
-    axis_x->setRange(0.0, static_cast<double>(max_metric + x_padding));
+    axis_x->setTitleText("Центр интервала (A + B) / 2");
+    const long double center_range = max_center - min_center;
+    const long double center_padding = std::max(0.0001L, center_range * 0.1L);
+    axis_x->setRange(static_cast<double>(min_center - center_padding),
+                     static_cast<double>(max_center + center_padding));
+    axis_x->setLabelFormat(center_range < 0.01L ? "%.4f" :
+                           center_range < 0.1L ? "%.3f" : "%.2f");
     axis_x->setGridVisible(false);
     axis_x->setSubGridVisible(false);
     auto *axis_y = new QValueAxis(this);
-    axis_y->setTitleText("Ширина интервала");
-    const long double width_range = max_width - min_width;
-    const long double width_padding = std::max(0.0001L, width_range * 0.1L);
-    axis_y->setRange(static_cast<double>(min_width - width_padding),
-                     static_cast<double>(max_width + width_padding));
-    axis_y->setLabelFormat(width_range < 0.01L ? "%.4f" :
-                           width_range < 0.1L ? "%.3f" : "%.2f");
+    axis_y->setTitleText("Метрика до медоида");
+    const long double metric_padding = std::max(0.0001L, max_metric * 0.1L);
+    axis_y->setRange(0.0, static_cast<double>(max_metric + metric_padding));
     axis_y->setGridVisible(false);
     axis_y->setSubGridVisible(false);
     auto *theme = new QGraphsTheme(this);

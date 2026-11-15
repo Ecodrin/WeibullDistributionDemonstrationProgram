@@ -1,0 +1,39 @@
+flowchart LR
+    User[Пользователь]
+
+    subgraph GUI[Графический интерфейс]
+        Main[Главное окно]
+        Arithmetic[Окно арифметики]
+        Filter[Окно фильтрации alpha]
+        Clustering[Окно кластеризации]
+        Charts[Графики и списки]
+    end
+
+    subgraph Core[Математическое ядро]
+        Generator[Генератор интервалов<br/>по распределению Weibull]
+        Values[Модель нечёткой величины<br/>один интервал A..B]
+        Operations[Арифметические операции<br/>+ - * / и сравнение]
+        Membership[Функция принадлежности]
+        Metrics[Метрики расстояния<br/>Hausdorff, Euclidean,<br/>ширина, квадрат ширины]
+        ClusteringAlgorithm[Алгоритм k-medoids]
+    end
+
+    User --> Main
+    Main --> Generator
+    Main --> Values
+    Main --> Arithmetic
+    Main --> Filter
+    Main --> Clustering
+
+    Generator --> Values
+    Arithmetic --> Operations
+    Operations --> Values
+    Filter --> Membership
+    Values --> Membership
+    Clustering --> Metrics
+    Values --> Metrics
+    Metrics --> ClusteringAlgorithm
+    ClusteringAlgorithm --> Charts
+    Membership --> Charts
+    Values --> Charts
+    Charts --> User

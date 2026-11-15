@@ -20,8 +20,9 @@ IntervalFilterDialog::IntervalFilterDialog(
     auto *form = new QFormLayout();
     alpha_ = new QDoubleSpinBox(this);
     alpha_->setRange(0.0, 1.0);
-    alpha_->setSingleStep(0.05);
-    alpha_->setValue(0.8);
+    alpha_->setDecimals(4);
+    alpha_->setSingleStep(0.0001);
+    alpha_->setValue(0.8000);
     form->addRow("Уровень α:", alpha_);
     layout->addLayout(form);
     result_ = new QListWidget(this);
@@ -47,7 +48,7 @@ void IntervalFilterDialog::update_result()
                                  .arg(static_cast<int>(index))
                                  .arg(static_cast<double>(interval.first), 0, 'g', 8)
                                  .arg(static_cast<double>(interval.second), 0, 'g', 8)
-                                 .arg(static_cast<double>(membership), 0, 'f', 3));
+                                 .arg(static_cast<double>(membership), 0, 'f', 4));
         }
     }
     if (result_->count() == 0) result_->addItem("Нет интервалов для выбранного α");

@@ -49,7 +49,6 @@ void MainWindow::update_fuzzy_values_list()
 
 void MainWindow::on_GenerateFuzzyValuesButton_clicked()
 {
-    fuzzy_values.clear();
     size_t count_generate = ui->CountGenerateFuzzyValuesspinBox->value();
     for(size_t i = 0; i < count_generate; ++i) {
         fuzzy_logic::fuzzy_value v = fuzzy_logic::generate_random_fuzzy_value(ui->KSpinBox->value(), ui->LambdadoubleSpinBox->value());
@@ -162,6 +161,7 @@ void MainWindow::on_CreateClastersPushButton_clicked()
     if (selected.empty()) {
         selected = fuzzy_values;
     }
-    ClusteringDialog dialog(selected, this);
+    ClusteringDialog dialog(selected, ui->KSpinBox->value(),
+                            ui->LambdadoubleSpinBox->value(), this);
     dialog.exec();
 }

@@ -1,0 +1,17 @@
+C4Container
+    title Контейнеры системы
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
+
+    Person(user, "Пользователь", "Использует графический интерфейс")
+    System_Boundary(app, "Weibull Distribution Demonstration Program") {
+        Container(gui, "Qt GUI", "C++ / Qt 6", "Главное окно и диалоговые окна программы")
+        Container(fuzzy, "Fuzzy Logic Library", "C++", "Интервалы, операции, метрики и k-medoids")
+        Container(weibull, "Weibull Distribution Library", "C++", "Функция принадлежности и генерация выборок")
+        Container(graphs, "Qt Graphs/QML", "Qt 6", "Отображение графиков")
+    }
+
+    Rel(user, gui, "Управляет программой")
+    Rel(gui, fuzzy, "Использует")
+    Rel(gui, weibull, "Использует через математическое ядро")
+    Rel(gui, graphs, "Передаёт данные графиков")
+    Rel(fuzzy, weibull, "Использует распределение Weibull")

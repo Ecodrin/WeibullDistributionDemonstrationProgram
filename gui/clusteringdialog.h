@@ -22,8 +22,16 @@ private slots:
     void run_clustering();
 
 private:
-    void render_clustering(const std::vector<fuzzy_logic::fuzzy_value> &values,
-                           QQuickWidget *graph);
+    void render_clustering(
+        const std::vector<size_t> &indices,
+        const std::vector<std::vector<long double>> &distance,
+        const std::vector<int> &medoids,
+        const std::vector<int> &labels,
+        const std::vector<int> &color_indices,
+        long double min_center,
+        long double max_center,
+        long double max_y,
+        QQuickWidget *graph);
 
     std::vector<fuzzy_logic::fuzzy_value> values_;
     long double k_;

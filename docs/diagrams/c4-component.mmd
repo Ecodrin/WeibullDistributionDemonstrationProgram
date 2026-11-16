@@ -1,0 +1,18 @@
+C4Component
+    title Компоненты контейнера Fuzzy Logic Library
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+
+    Container_Boundary(fuzzy, "Fuzzy Logic Library") {
+        Component(value, "fuzzy_value", "C++ class", "Представляет одну нечёткую величину как интервал [A; B]")
+        Component(operations, "Interval Operations", "C++ operators", "Арифметика и сравнение интервалов")
+        Component(membership, "Membership Functions", "C++ functions", "Вычисляет функцию принадлежности Weibull")
+        Component(metrics, "Distance Metrics", "C++ functions", "Hausdorff, Euclidean, width и squared width")
+        Component(clustering, "k-medoids", "C++ function", "Распределяет интервалы по кластерам")
+        Component(generation, "Value Generation", "C++ functions", "Генерирует интервалы по параметрам")
+    }
+
+    Rel(operations, value, "Создаёт и возвращает")
+    Rel(generation, value, "Создаёт")
+    Rel(generation, membership, "Использует параметры Weibull")
+    Rel(clustering, metrics, "Строит матрицу расстояний")
+    Rel(clustering, value, "Кластеризует")

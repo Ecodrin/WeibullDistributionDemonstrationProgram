@@ -4,6 +4,8 @@
 #include <vector>
 
 #include <QMainWindow>
+#include <QFileDialog>
+#include <sstream>
 
 #include "fuzzy_logic.hpp"
 
@@ -29,6 +31,8 @@ private slots:
     void on_OpenArithmeticButton_clicked();
     void on_CreateClastersPushButton_clicked();
     void on_ShowAlphaCutButton_clicked();
+
+    void on_SaveLogPushButton_clicked();
 
 private:
     void update_overall_graph();

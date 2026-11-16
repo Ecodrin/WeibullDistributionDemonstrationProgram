@@ -6,52 +6,105 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>655</width>
-    <height>513</height>
+    <width>1107</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Работа с нечеткими величинами</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
+   <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1" columnminimumwidth="0,0">
     <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="toolTip">
+       <string>Каждая величина представлена одним отрезком [A; B]</string>
+      </property>
+      <property name="text">
+       <string>Сгенерированные нечёткие интервалы [A; B]</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" rowspan="3">
+     <widget class="QQuickWidget" name="OverallGraphQuickWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="resizeMode">
+       <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QListWidget" name="FuzzyValueslistWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="6" column="2">
+      <item row="6" column="1">
        <widget class="QPushButton" name="ShowAlphaCutButton">
-        <property name="text">
-         <string>Фильтр интервалов по α</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="toolTip">
-         <string>Каждая величина представлена одним отрезком [A; B]</string>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
-         <string>Сгенерированные нечёткие интервалы [A; B]</string>
+         <string>Фильтр по α</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QListWidget" name="FuzzyValueslistWidget">
-        <property name="maximumSize">
-         <size>
-          <width>300</width>
-          <height>16777215</height>
-         </size>
+       <widget class="QPushButton" name="GenerateFuzzyValuesButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+        <property name="toolTip">
+         <string>Сгенерировать от 100 до 300 интервальных нечётких величин</string>
         </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+        <property name="text">
+         <string>Сгенерировать</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
+      <item row="1" column="1">
        <widget class="QSpinBox" name="CountGenerateFuzzyValuesspinBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
          <number>100</number>
         </property>
@@ -63,118 +116,101 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0,0,0,0,0,0">
-        <property name="sizeConstraint">
-         <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+      <item row="8" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QDoubleSpinBox" name="KSpinBox">
+        <property name="prefix">
+         <string>K: </string>
         </property>
-        <item row="5" column="0" colspan="2">
-         <widget class="QQuickWidget" name="OverallGraphQuickWidget">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>300</height>
-           </size>
-          </property>
-          <property name="resizeMode">
-           <enum>QQuickWidget::ResizeMode::SizeRootObjectToView</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QPushButton" name="OpenArithmeticButton">
-          <property name="text">
-           <string>Арифметические операции</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QPushButton" name="CreateClastersPushButton">
-          <property name="text">
-           <string>Выполнить кластеризацию</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        <property name="minimum">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>5.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>5.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="ClearFuzzyValuesButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Очистить</string>
+        </property>
+       </widget>
       </item>
       <item row="6" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Параметры</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="KSpinBox">
-          <property name="prefix">
-           <string>K: </string>
-          </property>
-          <property name="minimum">
-           <double>0.100000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>5.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.100000000000000</double>
-          </property>
-          <property name="value">
-           <double>5.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="LambdadoubleSpinBox">
-          <property name="accessibleName">
-           <string/>
-          </property>
-          <property name="prefix">
-           <string>λ: </string>
-          </property>
-          <property name="minimum">
-           <double>0.100000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>5.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.100000000000000</double>
-          </property>
-          <property name="value">
-           <double>1.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QPushButton" name="OpenArithmeticButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Арифметика</string>
+        </property>
+       </widget>
       </item>
-      <item row="5" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QPushButton" name="GenerateFuzzyValuesButton">
-          <property name="toolTip">
-           <string>Сгенерировать от 100 до 300 интервальных нечётких величин</string>
-          </property>
-          <property name="text">
-           <string>Сгенерировать интервалы</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="ClearFuzzyValuesButton">
-          <property name="text">
-           <string>Очистить интервалы</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="SaveLogPushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Сохранить</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="LambdadoubleSpinBox">
+        <property name="accessibleName">
+         <string/>
+        </property>
+        <property name="prefix">
+         <string>λ: </string>
+        </property>
+        <property name="minimum">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>5.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QPushButton" name="CreateClastersPushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Кластеризация</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

@@ -1,0 +1,50 @@
+classDiagram
+    class fuzzy_value {
+        -pair~long double, long double~ interval
+        +left() long double
+        +right() long double
+        +get_interval() pair
+        +calc_membership(x) long double
+        +operator+=(other)
+        +operator-=(other)
+        +operator*=(other)
+        +operator/=(other)
+    }
+
+    class ClusteringDialog {
+        -vector~fuzzy_value~ values_
+        -QComboBox metric_
+        -QDoubleSpinBox alpha_
+        +run_clustering()
+        -render_clustering(values, graph)
+    }
+
+    class IntervalFilterDialog {
+        -vector~fuzzy_value~ values_
+        -QDoubleSpinBox alpha_
+        +update_result()
+    }
+
+    class MainWindow {
+        -vector~fuzzy_value~ fuzzy_values
+        +on_GenerateFuzzyValuesButton_clicked()
+        +on_CreateClastersPushButton_clicked()
+        +update_overall_graph()
+    }
+
+    class FuzzyLogicFunctions {
+        <<namespace fuzzy_logic>>
+        +generate_random_fuzzy_value(k, lambda)
+        +generated_membership(x, k, lambda)
+        +Hausdorff_distance(first, second)
+        +k_medoids(dist, k, max_iter, seed)
+    }
+
+    MainWindow --> ClusteringDialog : opens
+    MainWindow --> IntervalFilterDialog : opens
+    MainWindow --> fuzzy_value : stores
+    ClusteringDialog --> FuzzyLogicFunctions : uses
+    ClusteringDialog --> fuzzy_value : clusters
+    IntervalFilterDialog --> FuzzyLogicFunctions : uses membership
+    IntervalFilterDialog --> fuzzy_value : filters
+    FuzzyLogicFunctions --> fuzzy_value : processes

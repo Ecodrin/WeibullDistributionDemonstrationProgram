@@ -165,3 +165,30 @@ void MainWindow::on_CreateClastersPushButton_clicked()
                             ui->LambdadoubleSpinBox->value(), this);
     dialog.exec();
 }
+
+void MainWindow::on_SaveLogPushButton_clicked()
+{
+    QString path = QFileDialog::getSaveFileName(
+        this,
+        "Сохранить в log file",
+        "",
+        "Все файлы (*.*)"
+        );
+    if (path.isEmpty()) {
+        return;
+    }
+
+    QFile file(path);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        std::ostringstream oss;
+        for(const auto & el : fuzzy_values) {
+            oss << el << "\n";
+        }
+        out << QString::fromStdString(oss.str());
+        file.close();
+    } else {
+        QMessageBox::critical(this, "Ошибка", "Не удалось записать в файл");
+    }
+}
+
